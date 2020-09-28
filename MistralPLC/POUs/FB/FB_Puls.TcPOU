@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="FB_Puls" Id="{03cc3659-2869-4289-acd0-a091a4802cb0}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Puls
+VAR_INPUT
+	tPeriod  :TIME;
+END_VAR
+VAR_OUTPUT
+	bPuls 	 :BOOL;
+END_VAR
+VAR
+	bM1		 :BOOL := TRUE;
+	TP1		 :TP;
+	TP2		 :TP;
+	fbPulsM1 :F_TRIG;
+	iCounter :INT;
+	bM2		 :BOOL;
+	fbPulsM2 :F_TRIG;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbPulsM1(CLK:= bM1);
+TP1(IN:= fbPulsM1.Q, PT:=tPeriod);
+bM2 :=TP1.Q;
+
+fbPulsM2(CLK:= bM2);
+TP2(IN:= fbPulsM1.Q,  PT:=tPeriod);
+
+bM1:= TP2.Q;
+bPuls := bM1;
+IF fbPulsM1.Q THEN
+	iCounter:=iCounter+1;
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Puls">
+      <LineId Id="3" Count="2" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="6" Count="6" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

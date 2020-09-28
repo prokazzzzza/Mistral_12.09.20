@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="FB_Tail" Id="{4cea5162-f671-492a-a4d3-4e7dfbed35c7}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Tail
+VAR_INPUT
+	sMessage1 :T_MaxString;
+	sMessage2 :T_MaxString;
+	sMessage3 :T_MaxString;
+	sMessage4 :T_MaxString;
+    bReset:BOOL;
+END_VAR
+VAR_OUTPUT
+	
+	
+END_VAR
+VAR
+	fbBuffer:FB_TransBuffer;
+	aTransBuff : ARRAY[1..10] OF T_MaxString;
+	
+	bReady:BOOL;
+	bEmpty:BOOL;
+END_VAR
+VAR_IN_OUT
+	bMessageReady1:BOOL;
+	bMessageReady2:BOOL;
+	bMessageReady3:BOOL;
+	bMessageReady4:BOOL;
+	bShiftBuff:BOOL;
+	sMessageOut:T_MaxString;
+	bNew:BOOL;
+END_VAR	]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+IF bMessageReady1 AND NOT fbBuffer.bBusy  THEN
+	fbBuffer(sTrans:=sMessage1,bWriteInBuff:=bMessageReady1,aTransBuff:=aTransBuff,bShiftBuff:=bShiftBuff,bNew:=bNew);
+END_IF
+IF bMessageReady2 AND NOT fbBuffer.bBusy  THEN
+	fbBuffer(sTrans:=sMessage2,bWriteInBuff:=bMessageReady2,aTransBuff:=aTransBuff,bShiftBuff:=bShiftBuff,bNew:=bNew);
+END_IF
+IF bMessageReady3 AND NOT fbBuffer.bBusy  THEN
+	fbBuffer(sTrans:=sMessage3,bWriteInBuff:=bMessageReady3,aTransBuff:=aTransBuff,bShiftBuff:=bShiftBuff,bNew:=bNew);
+END_IF
+IF bMessageReady4 AND NOT fbBuffer.bBusy  THEN
+	fbBuffer(sTrans:=sMessage4,bWriteInBuff:=bMessageReady4,aTransBuff:=aTransBuff,bShiftBuff:=bShiftBuff,bNew:=bNew);
+END_IF
+
+
+
+
+
+(*
+IF bMessageReady1 AND NOT fbBuffer.bBusy  THEN
+	fbBuffer(sTrans:=sMessage1,bWriteInBuff:=bMessageReady1,aTransBuff:=aTransBuff,bShiftBuff:=bShiftBuff);
+   IF	NOT fbBuffer.bBusy THEN
+	   bReady:=TRUE;
+   END_IF
+   
+   
+   
+ELSIF bMessageReady2 AND NOT fbBuffer.bBusy THEN
+	fbBuffer(sTrans:=sMessage2,bWriteInBuff:=bMessageReady2,aTransBuff:=aTransBuff,bShiftBuff:=bShiftBuff);
+	  IF	NOT fbBuffer.bBusy THEN
+	   bReady:=TRUE;
+   END_IF 
+ELSIF bMessageReady3 THEN
+	fbBuffer(sTrans:=sMessage3,bWriteInBuff:=bMessageReady3,aTransBuff:=aTransBuff,bShiftBuff:=bShiftBuff);	
+ELSIF bMessageReady4 THEN
+	fbBuffer(sTrans:=sMessage4,bWriteInBuff:=bMessageReady4,aTransBuff:=aTransBuff,bShiftBuff:=bShiftBuff);	
+	*)
+	
+(*IF 	NOT fbBuffer.bBusy  THEN
+	fbBuffer(sTrans:=sMessage1,bWriteInBuff:=bMessageReady1,aTransBuff:=aTransBuff,bShiftBuff:=bEmpty);
+	fbBuffer(sTrans:=sMessage2,bWriteInBuff:=bMessageReady2,aTransBuff:=aTransBuff,bShiftBuff:=bEmpty);
+    fbBuffer(sTrans:=sMessage3,bWriteInBuff:=bMessageReady3,aTransBuff:=aTransBuff,bShiftBuff:=bEmpty);	
+    fbBuffer(sTrans:=sMessage4,bWriteInBuff:=bMessageReady4,aTransBuff:=aTransBuff,bShiftBuff:=bEmpty);	
+    fbBuffer(bWriteInBuff:=bEmpty,aTransBuff:=aTransBuff,bShiftBuff:=bShiftBuff);
+END_IF*)
+	
+   fbBuffer(bWriteInBuff:=bEmpty,aTransBuff:=aTransBuff,bShiftBuff:=bShiftBuff,bReset:=bReset,bNew:=bNew);
+   
+	sMessageOut:=fbBuffer.sTransBuffOut;
+	
+	
+	
+	]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Tail">
+      <LineId Id="90" Count="0" />
+      <LineId Id="94" Count="0" />
+      <LineId Id="91" Count="1" />
+      <LineId Id="95" Count="1" />
+      <LineId Id="93" Count="0" />
+      <LineId Id="129" Count="4" />
+      <LineId Id="124" Count="4" />
+      <LineId Id="40" Count="1" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="62" Count="1" />
+      <LineId Id="68" Count="2" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="66" Count="1" />
+      <LineId Id="65" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="72" Count="1" />
+      <LineId Id="81" Count="0" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="79" Count="1" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="88" Count="1" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="83" Count="3" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

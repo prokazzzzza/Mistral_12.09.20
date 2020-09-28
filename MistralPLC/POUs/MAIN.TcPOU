@@ -1,0 +1,380 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="MAIN" Id="{7da80254-9593-45c7-863e-5bca9a7fe7a9}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	fbPulse1 		:BLINK;
+	fbPulse2 		:BLINK;
+	fbPulse3 		:BLINK;
+	fbPulse4 		:BLINK;
+	fbPuls_Move  	:Puls;
+	fbPuls_Reverse  :Puls;
+	fbAlarmSound 	:PULS;
+	fbButtAuto1 	:FB_ButtonToggle;
+	fbButtManu1 	:FB_ButtonToggle;
+	fbButtStop1 	:FB_ButtonToggle;
+	fbButtReverse1 	:FB_ButtonToggle;
+	fbStartAutomat1 :R_TRIG;
+	fbStartSound1	:TP;	
+	fbTimerStart1 	:TON;
+	fbPuls 			:FB_Puls;
+	
+	fbButtAuto2 	:FB_ButtonToggle;
+	fbButtManu2 	:FB_ButtonToggle;
+	fbButtStop2 	:FB_ButtonToggle;
+	fbButtReverse2 	:FB_ButtonToggle;
+	fbStartAutomat2 :R_TRIG;
+	fbStartSound2	:TP;	
+	fbTimerStart2 	:TON;
+	
+	fbButtAuto3 	:FB_ButtonToggle;
+	fbButtManu3 	:FB_ButtonToggle;
+	fbButtStop3 	:FB_ButtonToggle;
+	fbButtReverse3 	:FB_ButtonToggle;
+	fbStartAutomat3 :R_TRIG;
+	fbStartSound3	:TP;	
+	fbTimerStart3 	:TON;
+	
+	fbButtAuto4 	:FB_ButtonToggle;
+	fbButtManu4 	:FB_ButtonToggle;
+	fbButtStop4 	:FB_ButtonToggle;
+	fbButtReverse4 	:FB_ButtonToggle;
+	fbStartAutomat4 :R_TRIG;
+	fbStartSound4	:TP;	
+	fbTimerStart4 	:TON;
+	test:BOOL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+	TCP_IP();
+	ACT_Drive();
+	ACT_Light();
+	Alarm_conv_1();
+	Alarm_conv_2();
+	Alarm_conv_3();
+	Alarm_conv_4();
+	Alarm_conv_General();
+	ACT_Conversion();
+	
+	Exchange_WMS();
+	
+
+	fbPuls_Move(Period :=T#1S);
+	fbPuls_Reverse(Period :=T#1.5S);
+//----------------------------------------------------------------------------//
+	//IF b_1K1_1 THEN bDirect1 := TRUE;
+//		ELSE bDirect1 := FALSE;
+//	END_IF
+	
+ConvLine1(bAutomat:=bAutomat1, bManual:=bManual1, bStop:=bStop1, bReset:= bReset1, bDirect:=bDirect1, bReverse:=bReverse1, bBuffering:=bBuffering1);
+
+	fbButtAuto1(bButt := bButtAuto1 AND NOT bManual1 AND NOT bStop1, bReset := bReset1 OR bAlarm1);
+	fbStartSound1 (IN :=fbButtAuto1.bOutB, PT :=T#3S);																
+	bSound1 := fbStartSound1.Q;
+	
+    fbStartAutomat1(CLK := fbButtAuto1.bOutB AND NOT bSound1);
+
+IF  fbStartAutomat1.Q THEN bStartAutomat1 := TRUE;
+END_IF
+		
+	bAutomat1 := fbButtAuto1.bOutB  AND NOT bStartAutomat1 AND NOT bSound1 AND NOT bStop1;
+	fbPuls(tPeriod := T#0.5S);
+
+	fbButtManu1(bButt := bButtManu1 AND NOT  bAutomat1 AND NOT bSound1, bReset := bReset1 OR bAlarm1);
+	bManual1 := fbButtManu1.bOutB;
+
+//	fbButtReverse1(bButt := bButtReverse1 AND NOT b_1KM1_1, bReset := bReset1 OR bAlarm1);
+//	bReverse1 := fbButtReverse1.bOutB;
+
+	fbButtStop1(bButt := bButtStop1 OR bAlarm1, bReset := bReset1);
+	bStop1 := fbButtStop1.bOutB ;
+    	
+	fbTimerStart1 (IN := bStartAutomat1, PT := T#1S);
+
+IF NOT bStop1 AND fbTimerStart1.Q AND NOT 
+  ( bDrive1s01M1 OR bDrive1s02M1 OR bDrive1s03M1 OR 
+	bDrive1s04M1 OR bDrive1s05M1 OR bDrive1s06M1 OR 
+	bDrive1s01M1Rev OR bDrive1s02M1Rev OR bDrive1s03M1Rev OR 
+	bDrive1s04M1Rev OR bDrive1s05M1Rev OR bDrive1s06M1Rev )
+THEN bStartAutomat1 := FALSE;
+END_IF
+
+IF bReset1 THEN bAutomat1 := FALSE; bManual1 := FALSE; bStop1 := FALSE; bStartAutomat1 := FALSE;
+END_IF
+
+fbpulse1(ENABLE := bStartAutomat1 OR bSound1,TIMELOW := T#500MS, TIMEHIGH:=T#500MS);
+//Светофоры первого конвейера
+bGreen_1S1HL1  := bAutomat1 AND NOT bManual1 AND NOT bAlarm1 AND NOT bSound1 AND b_1AS1 OR fbpulse1.OUT;
+bGreen_1S1_HL1 := bAutomat1 AND NOT bManual1 AND NOT bAlarm1 AND NOT bSound1 AND b_1AS1 OR fbpulse1.OUT;
+
+bYellow_1S1HL1 := NOT bAutomat1 AND bManual1 AND NOT bAlarm1;
+bYellow_1S1_HL1:= NOT bAutomat1 AND bManual1 AND NOT bAlarm1;
+//---------------------------------------------------------------------------------------------------//
+
+	//IF b_2K1_1 THEN bDirect2 := TRUE;
+//		ELSE bDirect2 := FALSE;
+//	END_IF
+	
+ConvLine2(bAutomat:=bAutomat2, bManual:=bManual2, bStop:=bStop2, bReset:= bReset2, bDirect:=bDirect2, bReverse:=bReverse2, bBuffering:=bBuffering2);
+
+	fbButtAuto2(bButt := bButtAuto2 AND NOT bManual2, bReset := bReset2 OR bAlarm2);
+	fbStartSound2 (IN :=fbButtAuto2.bOutB, PT :=T#3S);																
+	bSound2 := fbStartSound2.Q  ;
+	
+    fbStartAutomat2(CLK := fbButtAuto2.bOutB AND NOT bSound2);
+
+IF  fbStartAutomat2.Q THEN bStartAutomat2 := TRUE;
+END_IF
+		
+	bAutomat2 := fbButtAuto2.bOutB  AND NOT bStartAutomat2 AND NOT bSound2;
+	fbPuls(tPeriod := T#0.5S);
+
+	fbButtManu2(bButt := bButtManu2 AND NOT  bAutomat2, bReset := bReset2 OR bAlarm2);
+	bManual2 := fbButtManu2.bOutB;
+
+	fbButtReverse2(bButt := bButtReverse2 AND NOT b_2KM1_1, bReset := bReset2 OR bAlarm2);
+	bReverse2 := fbButtReverse2.bOutB;
+
+	fbButtStop2(bButt := bButtStop2 OR bAlarm2, bReset := bReset2);
+	bStop2 := fbButtStop2.bOutB ;
+    	
+	fbTimerStart2 (IN := bStartAutomat2, PT := T#1S);
+
+IF NOT bStop2 AND fbTimerStart2.Q AND NOT 
+  ( bDrive2s01M1 OR bDrive2s02M1 OR bDrive2s03M1 OR 
+	bDrive2s04M1 OR bDrive2s05M1 OR bDrive2s06M1 OR 
+	bDrive2s01M1Rev OR bDrive2s02M1Rev OR bDrive2s03M1Rev OR 
+	bDrive2s04M1Rev OR bDrive2s05M1Rev OR bDrive2s06M1Rev )
+THEN bStartAutomat2 := FALSE;
+END_IF
+
+IF bReset2 THEN bAutomat2 := FALSE; bManual2 := FALSE; bStop2 := FALSE; bStartAutomat2 := FALSE;
+END_IF
+
+fbpulse2(ENABLE := bStartAutomat2 OR bSound2,TIMELOW := T#500MS, TIMEHIGH:=T#500MS);
+//Светофоры первого конвейера
+bGreen_2S1HL1  := bAutomat2 AND NOT bManual2 AND NOT bAlarm2 AND NOT bSound2 AND b_2AS1 OR fbpulse2.OUT;
+bGreen_2S1_HL1 := bAutomat2 AND NOT bManual2 AND NOT bAlarm2 AND NOT bSound2 AND b_2AS1 OR fbpulse2.OUT;
+
+bYellow_2S1HL1 := NOT bAutomat2 AND bManual2 AND NOT bAlarm2;
+bYellow_2S1_HL1:= NOT bAutomat2 AND bManual2 AND NOT bAlarm2;
+//---------------------------------------------------------------------------------------------------//
+
+//	IF b_3K1_1 THEN bDirect3 := TRUE;
+//		ELSE bDirect3 := FALSE;
+//	END_IF
+	
+ConvLine3(bAutomat:=bAutomat3, bManual:=bManual3, bStop:=bStop3, bReset:= bReset3, bDirect:=bDirect3, bReverse:=bReverse3, bBuffering:=bBuffering3);
+
+	fbButtAuto3(bButt := bButtAuto3 AND NOT bManual3, bReset := bReset3 OR bAlarm3);
+	fbStartSound3 (IN :=fbButtAuto3.bOutB, PT :=T#3S);																
+	bSound3 := fbStartSound3.Q  ;
+	
+    fbStartAutomat3(CLK := fbButtAuto3.bOutB AND NOT bSound3);
+
+IF  fbStartAutomat3.Q THEN bStartAutomat3 := TRUE;
+END_IF
+		
+	bAutomat3 := fbButtAuto3.bOutB  AND NOT bStartAutomat3 AND NOT bSound3;
+	fbPuls(tPeriod := T#0.5S);
+
+	fbButtManu3(bButt := bButtManu3 AND NOT  bAutomat3, bReset := bReset3 OR bAlarm3);
+	bManual3 := fbButtManu3.bOutB;
+
+	fbButtReverse3(bButt := bButtReverse3 AND NOT b_3KM1_1, bReset := bReset3 OR bAlarm3);
+	bReverse3 := fbButtReverse3.bOutB;
+
+	fbButtStop3(bButt := bButtStop3 OR bAlarm3, bReset := bReset3);
+	bStop3 := fbButtStop3.bOutB ;
+    	
+	fbTimerStart3 (IN := bStartAutomat3, PT := T#1S);
+
+IF NOT bStop3 AND fbTimerStart3.Q AND NOT 
+  ( bDrive3s01M1 OR bDrive3s02M1 OR bDrive3s03M1 OR 
+	bDrive3s04M1 OR bDrive3s05M1 OR bDrive3s06M1 OR 
+	bDrive3s01M1Rev OR bDrive3s02M1Rev OR bDrive3s03M1Rev OR 
+	bDrive3s04M1Rev OR bDrive3s05M1Rev OR bDrive3s06M1Rev )
+THEN bStartAutomat3 := FALSE;
+END_IF
+
+IF bReset3 THEN bAutomat3 := FALSE; bManual3 := FALSE; bStop3 := FALSE; bStartAutomat3 := FALSE;
+END_IF
+
+fbpulse3(ENABLE := bStartAutomat3 OR bSound3,TIMELOW := T#500MS, TIMEHIGH:=T#500MS);
+//Светофоры первого конвейера
+bGreen_3S1HL1  := bAutomat3 AND NOT bManual3 AND NOT bAlarm3 AND NOT bSound3 OR fbpulse3.OUT;
+bGreen_3S1_HL1 := bAutomat3 AND NOT bManual3 AND NOT bAlarm3 AND NOT bSound3 OR fbpulse3.OUT;
+
+bYellow_3S1HL1 := NOT bAutomat3 AND bManual3 AND NOT bAlarm3;
+bYellow_3S1_HL1:= NOT bAutomat3 AND bManual3 AND NOT bAlarm3;
+//---------------------------------------------------------------------------------------------------//
+
+//	IF b_4K1_1 THEN bDirect4 := TRUE;
+//		ELSE bDirect4 := FALSE;
+//	END_IF
+	
+ConvLine4(bAutomat:=bAutomat4, bManual:=bManual4, bStop:=bStop4, bReset:= bReset4, bDirect:=bDirect4, bReverse:=bReverse4, bBuffering:=bBuffering4);
+
+	fbButtAuto4(bButt := bButtAuto4 AND NOT bManual4, bReset := bReset4 OR bAlarm4);
+	fbStartSound4 (IN :=fbButtAuto4.bOutB, PT :=T#3S);																
+	bSound4 := fbStartSound4.Q  ;
+	
+    fbStartAutomat4(CLK := fbButtAuto4.bOutB AND NOT bSound4);
+
+IF  fbStartAutomat4.Q THEN bStartAutomat4 := TRUE;
+END_IF
+		
+	bAutomat4 := fbButtAuto4.bOutB  AND NOT bStartAutomat4 AND NOT bSound4;
+	fbPuls(tPeriod := T#0.5S);
+
+	fbButtManu4(bButt := bButtManu4 AND NOT  bAutomat4, bReset := bReset4 OR bAlarm4);
+	bManual4 := fbButtManu4.bOutB;
+
+	fbButtReverse4(bButt := bButtReverse4 AND NOT b_4KM1_1, bReset := bReset4 OR bAlarm4);
+	bReverse4 := fbButtReverse4.bOutB;
+
+	fbButtStop4(bButt := bButtStop4 OR bAlarm4, bReset := bReset4);
+	bStop4 := fbButtStop4.bOutB ;
+    	
+	fbTimerStart4 (IN := bStartAutomat4, PT := T#1S);
+
+IF NOT bStop4 AND fbTimerStart4.Q AND NOT 
+  ( bDrive4s01M1 OR bDrive4s02M1 OR bDrive4s03M1 OR 
+	bDrive4s04M1 OR bDrive4s05M1 OR bDrive4s06M1 OR 
+	bDrive4s01M1Rev OR bDrive4s02M1Rev OR bDrive4s03M1Rev OR 
+	bDrive4s04M1Rev OR bDrive4s05M1Rev OR bDrive4s06M1Rev )
+THEN bStartAutomat4 := FALSE;
+END_IF
+
+IF bReset4 THEN bAutomat4 := FALSE; bManual4 := FALSE; bStop4 := FALSE; bStartAutomat4 := FALSE;
+END_IF
+
+fbpulse4(ENABLE := bStartAutomat4 OR bSound4,TIMELOW := T#500MS, TIMEHIGH:=T#500MS);
+//Светофоры первого конвейера
+bGreen_4S1HL1  := bAutomat4 AND NOT bManual4 AND NOT bAlarm4 AND NOT bSound4 OR fbpulse4.OUT;
+bGreen_4S1_HL1 := bAutomat4 AND NOT bManual4 AND NOT bAlarm4 AND NOT bSound4 OR fbpulse4.OUT;
+
+bYellow_4S1HL1 := NOT bAutomat4 AND bManual4 AND NOT bAlarm4;
+bYellow_4S1_HL1:= NOT bAutomat4 AND bManual4 AND NOT bAlarm4;
+//---------------------------------------------------------------------------------------------------//]]></ST>
+    </Implementation>
+    <Action Name="ACT_Conversion" Id="{bc183f6f-c742-462c-9e2c-a7099b47c9c7}">
+      <Implementation>
+        <ST><![CDATA[Massa_1_INT :=REAL_TO_INT( Massa_1);
+Massa_2_INT :=REAL_TO_INT( Massa_2);
+Massa_3_INT :=REAL_TO_INT( Massa_3);
+Massa_4_INT :=REAL_TO_INT( Massa_4);
+
+Massa_1_Gramms := REAL_TO_DINT( Massa_1 * 1000000);
+Massa_2_Gramms := REAL_TO_DINT( Massa_2 * 1000000);
+Massa_3_Gramms := REAL_TO_DINT( Massa_3 * 1000000);
+Massa_4_Gramms := REAL_TO_DINT( Massa_4 * 1000000);]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="ACT_Drive" Id="{2dadc728-c1c7-4890-a2b4-04d40a7ca2b9}">
+      <Implementation>
+        <ST><![CDATA[//----------------------------------------------------------// конвейер 1
+b1K2 := bDrive1s01M1 OR bDrive1s01M1Rev; // Пуск 1UZ1					 
+b1K3 := bDrive1s02M1 OR bDrive1s02M1Rev; // Пуск 1UZ2
+b1K4 := bDrive1s03M1 OR bDrive1s03M1Rev; // Пуск 1UZ3
+b1K5 := bDrive1s04M1 OR bDrive1s04M1Rev; // Пуск 1UZ4
+b1K6 := bDrive1s05M1 OR bDrive1s05M1Rev; // Пуск 1UZ5
+b1K7 := bDrive1s06M1 OR bDrive1s06M1Rev; // Пуск 1UZ6
+//---------------------------------------------------------// конвейер 2
+b2K2 := bDrive2s01M1 OR bDrive2s01M1Rev; // Пуск 2UZ1					 
+b2K3 := bDrive2s02M1 OR bDrive2s02M1Rev; // Пуск 2UZ2
+b2K4 := bDrive2s03M1 OR bDrive2s03M1Rev; // Пуск 2UZ3
+b2K5 := bDrive2s04M1 OR bDrive2s04M1Rev; // Пуск 2UZ4
+b2K6 := bDrive2s05M1 OR bDrive2s05M1Rev; // Пуск 2UZ5
+b2K7 := bDrive2s06M1 OR bDrive2s06M1Rev; // Пуск 2UZ6
+//---------------------------------------------------------// конвейер 3
+b3K2 := bDrive3s01M1 OR bDrive3s01M1Rev; // Пуск 3UZ1					 
+b3K3 := bDrive3s02M1 OR bDrive3s02M1Rev; // Пуск 3UZ2
+b3K4 := bDrive3s03M1 OR bDrive3s03M1Rev; // Пуск 3UZ3
+b3K5 := bDrive3s04M1 OR bDrive3s04M1Rev; // Пуск 3UZ4
+b3K6 := bDrive3s05M1 OR bDrive3s05M1Rev; // Пуск 3UZ5
+b3K7 := bDrive3s06M1 OR bDrive3s06M1Rev; // Пуск 3UZ6
+//---------------------------------------------------------// конвейер 4
+b4K2 := bDrive4s01M1 OR bDrive4s01M1Rev; // Пуск 4UZ1					 
+b4K3 := bDrive4s02M1 OR bDrive4s02M1Rev; // Пуск 4UZ2
+b4K4 := bDrive4s03M1 OR bDrive4s03M1Rev; // Пуск 4UZ3
+b4K5 := bDrive4s04M1 OR bDrive4s04M1Rev; // Пуск 4UZ4
+b4K6 := bDrive4s05M1 OR bDrive4s05M1Rev; // Пуск 4UZ5
+b4K7 := bDrive4s06M1 OR bDrive4s06M1Rev; // Пуск 4UZ6]]></ST>
+      </Implementation>
+    </Action>
+    <Action Name="ACT_Light" Id="{6e5d8f23-9785-4fd6-a505-3039818503fa}">
+      <Implementation>
+        <ST><![CDATA[bSound_1S1HL1 := bSound1;
+bSound_1S1_HL1:= bSound1;
+bSound_2S1HL1 := bSound2;
+bSound_2S1_HL1:= bSound2;
+bSound_3S1HL1 := bSound3;
+bSound_3S1_HL1:= bSound3;
+bSound_4S1HL1 :=bSound4;
+bSound_4S1_HL1:=bSound4;]]></ST>
+      </Implementation>
+    </Action>
+    <LineIds Name="MAIN">
+      <LineId Id="400" Count="9" />
+      <LineId Id="690" Count="2" />
+      <LineId Id="410" Count="42" />
+      <LineId Id="639" Count="0" />
+      <LineId Id="577" Count="0" />
+      <LineId Id="576" Count="0" />
+      <LineId Id="578" Count="1" />
+      <LineId Id="599" Count="1" />
+      <LineId Id="598" Count="0" />
+      <LineId Id="453" Count="40" />
+      <LineId Id="648" Count="0" />
+      <LineId Id="640" Count="0" />
+      <LineId Id="581" Count="1" />
+      <LineId Id="580" Count="0" />
+      <LineId Id="596" Count="1" />
+      <LineId Id="595" Count="0" />
+      <LineId Id="494" Count="40" />
+      <LineId Id="647" Count="0" />
+      <LineId Id="644" Count="0" />
+      <LineId Id="584" Count="1" />
+      <LineId Id="583" Count="0" />
+      <LineId Id="593" Count="1" />
+      <LineId Id="592" Count="0" />
+      <LineId Id="535" Count="40" />
+      <LineId Id="646" Count="0" />
+      <LineId Id="645" Count="0" />
+      <LineId Id="587" Count="1" />
+      <LineId Id="586" Count="0" />
+      <LineId Id="590" Count="0" />
+      <LineId Id="589" Count="0" />
+      <LineId Id="591" Count="0" />
+      <LineId Id="281" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.ACT_Conversion">
+      <LineId Id="1" Count="3" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="2" />
+    </LineIds>
+    <LineIds Name="MAIN.ACT_Drive">
+      <LineId Id="97" Count="0" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="100" Count="0" />
+      <LineId Id="167" Count="4" />
+      <LineId Id="177" Count="4" />
+      <LineId Id="172" Count="1" />
+      <LineId Id="182" Count="4" />
+      <LineId Id="174" Count="1" />
+      <LineId Id="187" Count="4" />
+      <LineId Id="176" Count="0" />
+    </LineIds>
+    <LineIds Name="MAIN.ACT_Light">
+      <LineId Id="1" Count="1" />
+      <LineId Id="4" Count="0" />
+      <LineId Id="3" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

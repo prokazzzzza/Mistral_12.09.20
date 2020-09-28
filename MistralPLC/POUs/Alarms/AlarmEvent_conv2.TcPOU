@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="AlarmEvent_conv2" Id="{bb0b3170-0c50-4336-abb8-c2e35e78c9fd}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM AlarmEvent_conv2
+VAR
+	bIsInitalized				:BOOL;
+	fbButtAlarmReset2_RTRIG 	:R_TRIG;
+
+//готовность конвейера
+	fbAlarm2QF2_2QF7			:FB_TcAlarm;
+	fbAlarm2QF8					:FB_TcAlarm;
+	fbAlarm2KM2					:FB_TcAlarm;
+	fbAlarm2KM3					:FB_TcAlarm;
+	fbAlarm2KM4					:FB_TcAlarm;
+	fbAlarm2KM5					:FB_TcAlarm;
+	fbAlarm2KM6					:FB_TcAlarm;
+	fbAlarm2KM7					:FB_TcAlarm;
+//Грибки	
+	fbAlarm_b2_S1_SB0			:FB_TcAlarm;
+	fbAlarm_b2_S6_SB0			:FB_TcAlarm;
+//готовность двигателей
+	fbNotDriveReady2s01M1		:FB_TcAlarm;
+	fbNotDriveReady2s02M1		:FB_TcAlarm;
+	fbNotDriveReady2s03M1		:FB_TcAlarm;
+	fbNotDriveReady2s04M1		:FB_TcAlarm;
+	fbNotDriveReady2s05M1		:FB_TcAlarm;
+	fbNotDriveReady2s06M1		:FB_TcAlarm;
+//Долгие перемещения
+	fbLongMove_2s01_2s02		:FB_TcAlarm;
+	fbLongMove_2s02_2s03		:FB_TcAlarm;
+	fbLongMove_2s03_2s04		:FB_TcAlarm;
+	fbLongMove_2s04_2s05		:FB_TcAlarm;
+	fbLongMove_2s05_2s06		:FB_TcAlarm;
+//----------------------------------------------------------------------------//	
+//готовность конвейера
+	fbExecAlarm2QF2_2QF7		:FB_AlarmEvent;
+	fbExecAlarm2QF8				:FB_AlarmEvent;
+	fbExecAlarm2KM2				:FB_AlarmEvent;
+	fbExecAlarm2KM3				:FB_AlarmEvent;
+	fbExecAlarm2KM4				:FB_AlarmEvent;
+	fbExecAlarm2KM5				:FB_AlarmEvent;
+	fbExecAlarm2KM6				:FB_AlarmEvent;
+	fbExecAlarm2KM7				:FB_AlarmEvent;
+//Грибки	
+	fbExecAlarm_b2_S1_SB0		:FB_AlarmEvent;
+	fbExecAlarm_b2_S6_SB0		:FB_AlarmEvent;
+//готовность двигателей
+	fbExecNotDriveReady2s01M1	:FB_AlarmEvent;
+	fbExecNotDriveReady2s02M1	:FB_AlarmEvent;
+	fbExecNotDriveReady2s03M1	:FB_AlarmEvent;
+	fbExecNotDriveReady2s04M1	:FB_AlarmEvent;
+	fbExecNotDriveReady2s05M1	:FB_AlarmEvent;
+	fbExecNotDriveReady2s06M1	:FB_AlarmEvent;
+//Долгие перемещения
+	fbExecLongMove_2s01_2s02	:FB_AlarmEvent;
+	fbExecLongMove_2s02_2s03	:FB_AlarmEvent;
+	fbExecLongMove_2s03_2s04	:FB_AlarmEvent;
+	fbExecLongMove_2s04_2s05	:FB_AlarmEvent;
+	fbExecLongMove_2s05_2s06	:FB_AlarmEvent;	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[Initialization();
+fbButtAlarmReset2_RTRIG (CLK := bButtAlarmReset2);
+
+fbExecAlarm2QF2_2QF7(bAlarmEvent :=bAlarm2QF2_2QF7, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbAlarm2QF2_2QF7);
+fbExecAlarm2QF8(bAlarmEvent :=bAlarm2QF8, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbAlarm2QF8);
+fbExecAlarm2KM2(bAlarmEvent :=bAlarm2KM2, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbAlarm2KM2);
+fbExecAlarm2KM3(bAlarmEvent :=bAlarm2KM3, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbAlarm2KM3);
+fbExecAlarm2KM4(bAlarmEvent :=bAlarm2KM4, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbAlarm2KM4);
+fbExecAlarm2KM5(bAlarmEvent :=bAlarm2KM5, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbAlarm2KM5);
+fbExecAlarm2KM6(bAlarmEvent :=bAlarm2KM6, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbAlarm2KM6);
+fbExecAlarm2KM7(bAlarmEvent :=bAlarm2KM7, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbAlarm2KM7);
+
+fbExecAlarm_b2_S1_SB0(bAlarmEvent :=bAlarm_b2_S1_SB0, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbAlarm_b2_S1_SB0);
+fbExecAlarm_b2_S6_SB0(bAlarmEvent :=bAlarm_b2_S6_SB0, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbAlarm_b2_S6_SB0);
+
+fbExecNotDriveReady2s01M1(bAlarmEvent :=bNotDriveReady2s01M1, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbNotDriveReady2s01M1);
+fbExecNotDriveReady2s02M1(bAlarmEvent :=bNotDriveReady2s02M1, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbNotDriveReady2s02M1);
+fbExecNotDriveReady2s03M1(bAlarmEvent :=bNotDriveReady2s03M1, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbNotDriveReady2s03M1);
+fbExecNotDriveReady2s04M1(bAlarmEvent :=bNotDriveReady2s04M1, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbNotDriveReady2s04M1);
+fbExecNotDriveReady2s05M1(bAlarmEvent :=bNotDriveReady2s05M1, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbNotDriveReady2s05M1);
+fbExecNotDriveReady2s06M1(bAlarmEvent :=bNotDriveReady2s06M1, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbNotDriveReady2s06M1);
+
+(*fbExecLongMove_2s01_2s02(bAlarmEvent :=bLongMove_2s01_2s02, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbLongMove_2s01_2s02);
+fbExecLongMove_2s02_2s03(bAlarmEvent :=bLongMove_2s02_2s03, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbLongMove_2s02_2s03);
+fbExecLongMove_2s03_2s04(bAlarmEvent :=bLongMove_2s03_2s04, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbLongMove_2s03_2s04);
+fbExecLongMove_2s04_2s05(bAlarmEvent :=bLongMove_2s04_2s05, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbLongMove_2s04_2s05);
+fbExecLongMove_2s05_2s06(bAlarmEvent :=bLongMove_2s05_2s06, bButtAlarmReset:=fbButtAlarmReset2_RTRIG.Q, fbAlarm:=fbLongMove_2s05_2s06);
+*)
+]]></ST>
+    </Implementation>
+    <Action Name="Initialization" Id="{8b6e8b16-7d0f-49f2-bacb-a13ab65df9e2}">
+      <Implementation>
+        <ST><![CDATA[IF NOT bIsInitalized THEN
+	bIsInitalized := TRUE;
+	
+	fbAlarm2QF2_2QF7.CreateEx(TC_Events.AlarmConv2.Alarm2QF2_2QF7, TRUE, 0);
+	fbAlarm2QF8.CreateEx(TC_Events.AlarmConv2.Alarm2QF8, TRUE, 0);
+	fbAlarm2KM2.CreateEx(TC_Events.AlarmConv2.Alarm2KM2, TRUE, 0);
+	fbAlarm2KM3.CreateEx(TC_Events.AlarmConv2.Alarm2KM3, TRUE, 0);
+	fbAlarm2KM4.CreateEx(TC_Events.AlarmConv2.Alarm2KM4, TRUE, 0);
+	fbAlarm2KM5.CreateEx(TC_Events.AlarmConv2.Alarm2KM5, TRUE, 0);
+	fbAlarm2KM6.CreateEx(TC_Events.AlarmConv2.Alarm2KM6, TRUE, 0);
+	fbAlarm2KM7.CreateEx(TC_Events.AlarmConv2.Alarm2KM7, TRUE, 0);
+	
+	fbAlarm_b2_S1_SB0.CreateEx(TC_Events.AlarmConv2.Alarm_b2_S1_SB0, TRUE, 0);
+	fbAlarm_b2_S6_SB0.CreateEx(TC_Events.AlarmConv2.Alarm_b2_S6_SB0, TRUE, 0);
+	
+	fbNotDriveReady2s01M1.CreateEx(TC_Events.AlarmConv2.NotDriveReady2s01M1, TRUE, 0);
+	fbNotDriveReady2s02M1.CreateEx(TC_Events.AlarmConv2.NotDriveReady2s02M1, TRUE, 0);
+	fbNotDriveReady2s03M1.CreateEx(TC_Events.AlarmConv2.NotDriveReady2s03M1, TRUE, 0);
+	fbNotDriveReady2s04M1.CreateEx(TC_Events.AlarmConv2.NotDriveReady2s04M1, TRUE, 0);
+	fbNotDriveReady2s05M1.CreateEx(TC_Events.AlarmConv2.NotDriveReady2s05M1, TRUE, 0);
+	fbNotDriveReady2s06M1.CreateEx(TC_Events.AlarmConv2.NotDriveReady2s06M1, TRUE, 0);
+	
+	fbLongMove_2s01_2s02.CreateEx(TC_Events.AlarmConv2.LongMove_2s01_2s02, TRUE, 0);
+	fbLongMove_2s02_2s03.CreateEx(TC_Events.AlarmConv2.LongMove_2s02_2s03, TRUE, 0);
+	fbLongMove_2s03_2s04.CreateEx(TC_Events.AlarmConv2.LongMove_2s03_2s04, TRUE, 0);
+	fbLongMove_2s04_2s05.CreateEx(TC_Events.AlarmConv2.LongMove_2s04_2s05, TRUE, 0);
+	fbLongMove_2s05_2s06.CreateEx(TC_Events.AlarmConv2.LongMove_2s05_2s06, TRUE, 0);
+END_IF]]></ST>
+      </Implementation>
+    </Action>
+    <LineIds Name="AlarmEvent_conv2">
+      <LineId Id="12" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="66" Count="6" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="78" Count="4" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="85" Count="3" />
+      <LineId Id="147" Count="0" />
+      <LineId Id="146" Count="0" />
+    </LineIds>
+    <LineIds Name="AlarmEvent_conv2.Initialization">
+      <LineId Id="2" Count="0" />
+      <LineId Id="1" Count="0" />
+      <LineId Id="4" Count="24" />
+      <LineId Id="3" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

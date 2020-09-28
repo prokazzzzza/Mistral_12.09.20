@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="FB_TransBuffer" Id="{979b0c6b-a56b-4252-ae50-1dd3e6454919}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_TransBuffer
+VAR_INPUT
+	
+    sTrans: T_MaxString;
+	
+	bReset : BOOL;
+END_VAR
+VAR_OUTPUT
+	sTransBuffOut :T_MaxString;
+    bBusy: BOOL;
+END_VAR
+VAR
+	i: INT;
+	j: INT;
+	k: INT;
+	bGoodWrite: BOOL;
+	bRiseReset: BOOL;
+	
+END_VAR
+VAR_IN_OUT
+	bWriteInBuff : BOOL;
+	bShiftBuff : BOOL;
+	aTransBuff : ARRAY[1..10] OF T_MaxString;
+	bNew:BOOL;
+END_VAR
+
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+IF bWriteInBuff THEN
+bBusy:=TRUE;
+FOR j:=1 TO 10 DO
+IF aTransBuff[j] = '' THEN
+aTransBuff[j] :=  sTrans;
+IF J=1 THEN
+	bNew:=TRUE;
+END_IF
+
+EXIT;
+END_IF
+END_FOR
+bWriteInBuff :=FALSE;
+bBusy:=FALSE;
+END_IF
+
+
+
+
+IF bShiftBuff THEN
+bBusy:=TRUE;
+FOR i:=1 TO 9 DO aTransBuff[i] :=aTransBuff[i+1];
+END_FOR
+
+aTransBuff[10]:='';
+bShiftBuff := FALSE;
+bBusy:=FALSE;
+bNew:=TRUE;
+END_IF
+
+sTransBuffOut := aTransBuff[1];
+
+IF bReset  THEN
+FOR k :=1 TO 10 DO
+aTransBuff[k] :='';
+END_FOR
+
+END_IF
+bReset := FALSE;]]></ST>
+    </Implementation>
+    <LineIds Name="FB_TransBuffer">
+      <LineId Id="3" Count="5" />
+      <LineId Id="114" Count="2" />
+      <LineId Id="9" Count="11" />
+      <LineId Id="87" Count="0" />
+      <LineId Id="21" Count="4" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="27" Count="7" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

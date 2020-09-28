@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="FB_LoadDataToWMS" Id="{cc917973-8442-47c5-b7a7-71cad07ea9ab}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_LoadDataToWMS
+VAR_INPUT
+	stLoadIn		:ST_LoadData;
+	bEnable			:BOOL;
+	iConvStatus		:BYTE;
+	bAutomat		:BOOL;
+	bMove			:BOOL;
+	
+END_VAR
+VAR_OUTPUT
+	sMessageOut:T_MaxString;
+	
+END_VAR
+VAR
+	fbStartMove		:R_TRIG;
+	fbFinMove		:F_TRIG;
+	
+	bStartMove:BOOL;
+	bEndMove:BOOL;
+	fbDelayStartMove:TON;
+	fbDelayFinMove:TON;
+	bReadySend: BOOL;
+	
+	fbCreateMessage: FB_CreateMessage;
+END_VAR
+VAR_IN_OUT
+	stLoadMove      :ST_LoadData;
+	stLoad			:ST_LoadData;
+     bMessageReady:BOOL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbStartMove(CLK:=bMove);
+bStartMove S=fbStartMove.Q;
+fbDelayStartMove(IN:=bStartMove,PT:=T#0.3S);
+IF bStartMove THEN 
+	stLoadMove := stLoadIn;
+	IF stLoadMove.sID=stLoadIn.sID  AND  stLoadMove.sWeight=stLoadIn.sWeight OR fbDelayStartMove.Q  THEN
+		bStartMove:= FALSE;
+	END_IF
+END_IF
+
+
+fbFinMove(CLK:=bMove);
+bEndMove S= fbFinMove.Q;
+fbDelayFinMove(IN:=bEndMove,PT:=T#0.3S);
+IF bEndMove THEN 
+	stLoad := stLoadMove;
+	IF stLoadMove.sID=stLoad.sID   AND  stLoadMove.sWeight=stLoad.sWeight  OR fbDelayFinMove.Q  THEN
+		bEndMove:= FALSE;
+	END_IF
+END_IF
+
+
+bReadySend:=bAutomat AND (iConvStatus=2 OR iConvStatus=3) AND NOT bEndMove;
+
+fbCreateMessage(stLoad:=stLoad, bCreateMessage:=bReadySend, sMessageOut=>sMessageOut,
+bMessageReady:= bMessageReady );]]></ST>
+    </Implementation>
+    <LineIds Name="FB_LoadDataToWMS">
+      <LineId Id="3" Count="22" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="56" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

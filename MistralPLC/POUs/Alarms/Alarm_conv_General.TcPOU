@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="Alarm_conv_General" Id="{361ecc17-3c3b-41f4-ae2e-763841250de0}" SpecialFunc="None">
+    <Declaration><![CDATA[	PROGRAM Alarm_conv_General
+VAR
+Blink_All1	:BLINK;
+Blink_All2	:BLINK;
+start		:BOOL := TRUE;
+ReadyOK1 	:BOOL;
+ReadyOK2 	:BOOL;
+ReadyOK3 	:BOOL;
+ReadyOK4 	:BOOL;
+
+fbDirection1:FB_Direction;
+fbDirection2:FB_Direction;
+fbDirection3:FB_Direction;
+fbDirection4:FB_Direction;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[Blink_All1(ENABLE := start, TIMELOW := T#1000MS, TIMEHIGH :=T#500MS);
+Blink_All2(ENABLE := start, TIMELOW := T#500MS, TIMEHIGH :=T#500MS);
+
+//Нет готовности блоков питания
+	bNotReadyPower24v 	S=NOT b_GP3;
+  	bPermAlarm1			:=NOT bNotReadyPower24v;
+
+//УЗИП
+	bAlarm1QF 			S=NOT b_1QF  AND bPermAlarm1;
+	bAlarm2QF 			S=NOT b_2QF  AND bPermAlarm1;
+
+	bAlarmQF := bAlarm1QF OR bAlarm2QF;
+	
+//Вспомогательные системы
+	bAlarmSF3 			S=NOT b_SF3  AND bPermAlarm1;
+	bAlarmSF3_ 			S=NOT b_SF3_ AND bPermAlarm1;
+	
+	bAlarmSF := bAlarmSF3 OR bAlarmSF3_;
+
+//Аварии ввода	
+	bAlarmK2 			S=NOT b_K2   AND bPermAlarm1;
+	bAlarmK2_ 			S=NOT b_K2_  AND bPermAlarm1;
+	
+	bAlarm_Input_accident := bAlarmK2 OR bAlarmK2_;	
+	
+//Реле безопасности	
+	bAlarm1AS1 			S= NOT b_1AS1 AND bPermAlarm1;
+	bAlarm2AS1 			S= NOT b_2AS1 AND bPermAlarm1;
+	bAlarm3AS1 			S= NOT b_3AS1 AND bPermAlarm1;	
+	bAlarm4AS1 			S= NOT b_4AS1 AND bPermAlarm1;
+	
+	bAlarm_Safety_relay := bAlarm1AS1 OR bAlarm2AS1 OR 
+						   bAlarm3AS1 OR bAlarm4AS1;
+	
+//Питание приводов	
+	bAlarm1QF1 			S=NOT b_1QF1 AND bPermAlarm1;
+	bAlarm2QF1 			S=NOT b_2QF1 AND bPermAlarm1;
+	bAlarm3QF1 			S=NOT b_3QF1 AND bPermAlarm1;
+	bAlarm4QF1 			S=NOT b_4QF1 AND bPermAlarm1;
+	
+	bAlarm_Drive_power := bAlarm1QF1 OR bAlarm2QF1 OR 
+						  bAlarm3QF1 OR bAlarm4QF1;
+
+//Превышение тока или напряжения
+//	bAlarm1P_I 			S=NOT b_1P_I AND bPermAlarm1;
+//	bAlarm1P_U 			S=NOT b_1P_U AND bPermAlarm1;
+
+	bAlarm_Overload_I_U := bAlarm1P_I OR bAlarm1P_U;
+
+(*Нет общей готовности*)
+	bNotReadyGeneral := bNotReadyPower24v OR bAlarmQF OR bAlarmSF OR 
+						bAlarm_Input_accident OR bAlarm_Safety_relay OR 
+						bAlarm_Drive_power OR bAlarm_Overload_I_U;
+
+IF bButtAlarmResetGeneral THEN 
+	bNotReadyPower24v :=FALSE; 
+	bAlarmK2 :=FALSE; bAlarmK2_ :=FALSE;	
+	bAlarm1QF :=FALSE; bAlarm2QF :=FALSE; 
+	bAlarmSF3 :=FALSE; bAlarmSF3_ :=FALSE; 	
+	bAlarm1P_I :=FALSE; bAlarm1P_U :=FALSE;
+	bAlarm1AS1 :=FALSE; bAlarm2AS1 :=FALSE; bAlarm3AS1 :=FALSE; bAlarm4AS1 :=FALSE; 
+	bAlarm1QF1 :=FALSE; bAlarm2QF1 :=FALSE; bAlarm3QF1 :=FALSE; bAlarm4QF1 :=FALSE; 
+	bAlarm1QF8 :=FALSE; bAlarm2QF8 :=FALSE; bAlarm3QF8 :=FALSE; bAlarm4QF8 :=FALSE; 
+	bAlarm1QF2_1QF7 :=FALSE; bAlarm2QF2_2QF7 :=FALSE; bAlarm3QF2_3QF7 :=FALSE; bAlarm4QF2_4QF7 :=FALSE; 
+	bAlarm1KM2 :=FALSE; bAlarm1KM3 :=FALSE; bAlarm1KM4 :=FALSE; bAlarm1KM5 :=FALSE; bAlarm1KM6 :=FALSE; bAlarm1KM7 :=FALSE;
+	bAlarm2KM2 :=FALSE; bAlarm2KM3 :=FALSE; bAlarm2KM4 :=FALSE; bAlarm2KM5 :=FALSE; bAlarm2KM6 :=FALSE; bAlarm2KM7 :=FALSE;
+	bAlarm3KM2 :=FALSE; bAlarm3KM3 :=FALSE; bAlarm3KM4 :=FALSE; bAlarm3KM5 :=FALSE; bAlarm3KM6 :=FALSE; bAlarm3KM7 :=FALSE;
+	bAlarm4KM2 :=FALSE; bAlarm4KM3 :=FALSE; bAlarm4KM4 :=FALSE; bAlarm4KM5 :=FALSE; bAlarm4KM6 :=FALSE; bAlarm4KM7 :=FALSE;
+END_IF
+
+b1Sh_SB1 := NOT bAlarm1 AND NOT bAlarm2 AND NOT bNotReadyGeneral AND Blink_All1.OUT AND NOT b_1AS1 AND NOT b_2AS1;
+b2Sh_SB1 := NOT bAlarm3 AND NOT bAlarm4 AND NOT bNotReadyGeneral AND Blink_All1.OUT AND NOT b_3AS1 AND NOT b_4AS1;
+
+ReadyOK1 := NOT bAlarm1 AND NOT bNotReadyGeneral AND b_1AS1; 
+//b_1K1_1 := ReadyOK1 AND NOT b_1KM1_2  (*bButtReverse1*) AND (bAutomat1 OR bManual1) AND NOT bReverse1;
+ReadyOK2 := NOT bAlarm2 AND NOT bNotReadyGeneral AND b_2AS1; 
+//b_2K1_1 := ReadyOK2 AND NOT bButtReverse2 AND (bAutomat2 OR bManual2) AND NOT bReverse2;
+ReadyOK3 := NOT bAlarm3 AND NOT bNotReadyGeneral AND b_3AS1; 
+//b_3K1_1 := ReadyOK3 AND NOT bButtReverse3 AND (bAutomat3 OR bManual3) AND NOT bReverse3;
+ReadyOK4 := NOT bAlarm4 AND NOT bNotReadyGeneral AND b_4AS1; 
+//b_4K1_1 := ReadyOK4 AND NOT bButtReverse4 AND (bAutomat4 OR bManual4) AND NOT bReverse4;
+
+bDirect1:=b_1KM1_1;
+bReverse1:=b_1KM1_2;
+fbDirection1(bAutomat:=bAutomat1, bManual:=bManual1, bDirectOn :=bDirect1, bReverseOn:=bReverse1,
+	bButtReverse:=bButtReverse1,bSwitchOnDirect=>b_1K1_1, bSwitchOnReverse=>b_1K1_2);
+
+	
+bDirect2:=b_2KM1_1;
+bReverse2:=b_2KM1_2;
+fbDirection2(bAutomat:=bAutomat2, bManual:=bManual2, bDirectOn :=bDirect2, bReverseOn:=bReverse2,
+	bButtReverse:=bButtReverse2,bSwitchOnDirect=>b_2K1_1, bSwitchOnReverse=>b_2K1_2);
+	
+	
+bDirect3:=b_3KM1_1;
+bReverse3:=b_3KM1_2;
+fbDirection3(bAutomat:=bAutomat3, bManual:=bManual3, bDirectOn :=bDirect3, bReverseOn:=bReverse3,
+	bButtReverse:=bButtReverse3,bSwitchOnDirect=>b_3K1_1, bSwitchOnReverse=>b_3K1_2);
+	
+	
+bDirect4:=b_4KM1_1;
+bReverse4:=b_4KM1_2;
+fbDirection4(bAutomat:=bAutomat4, bManual:=bManual4, bDirectOn :=bDirect4, bReverseOn:=bReverse4,
+	bButtReverse:=bButtReverse4,bSwitchOnDirect=>b_4K1_1, bSwitchOnReverse=>b_4K1_2);
+	
+	
+(*
+
+IF (*bButtManu1*)bManual1 AND bButtReverse1 AND NOT b_1K1_1 THEN b_1K1_2 := TRUE;
+	ELSE b_1K1_2 := FALSE;
+END_IF
+IF bButtManu2 AND bButtReverse2 AND NOT b_2K1_1 THEN b_2K1_2 := TRUE;
+	ELSE b_2K1_2 := FALSE;
+END_IF
+IF bButtManu3 AND bButtReverse3 AND NOT b_3K1_1 THEN b_3K1_2 := TRUE;
+	ELSE b_3K1_2 := FALSE;
+END_IF
+IF bButtManu4 AND bButtReverse4 AND NOT b_4K1_1 THEN b_4K1_2 := TRUE;
+	ELSE b_4K1_2 := FALSE;
+END_IF
+*)
+AlarmEventGeneral();]]></ST>
+    </Implementation>
+    <LineIds Name="Alarm_conv_General">
+      <LineId Id="105" Count="0" />
+      <LineId Id="163" Count="0" />
+      <LineId Id="106" Count="0" />
+      <LineId Id="6" Count="24" />
+      <LineId Id="86" Count="2" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="92" Count="0" />
+      <LineId Id="32" Count="3" />
+      <LineId Id="89" Count="2" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="93" Count="0" />
+      <LineId Id="37" Count="4" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="43" Count="2" />
+      <LineId Id="94" Count="1" />
+      <LineId Id="58" Count="14" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="112" Count="0" />
+      <LineId Id="99" Count="0" />
+      <LineId Id="126" Count="1" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="124" Count="0" />
+      <LineId Id="131" Count="0" />
+      <LineId Id="129" Count="0" />
+      <LineId Id="135" Count="0" />
+      <LineId Id="134" Count="0" />
+      <LineId Id="137" Count="0" />
+      <LineId Id="136" Count="0" />
+      <LineId Id="175" Count="0" />
+      <LineId Id="198" Count="0" />
+      <LineId Id="178" Count="0" />
+      <LineId Id="194" Count="0" />
+      <LineId Id="180" Count="1" />
+      <LineId Id="176" Count="0" />
+      <LineId Id="210" Count="1" />
+      <LineId Id="214" Count="1" />
+      <LineId Id="204" Count="1" />
+      <LineId Id="216" Count="1" />
+      <LineId Id="220" Count="1" />
+      <LineId Id="206" Count="1" />
+      <LineId Id="222" Count="1" />
+      <LineId Id="226" Count="1" />
+      <LineId Id="208" Count="1" />
+      <LineId Id="174" Count="0" />
+      <LineId Id="125" Count="0" />
+      <LineId Id="119" Count="0" />
+      <LineId Id="121" Count="1" />
+      <LineId Id="143" Count="1" />
+      <LineId Id="141" Count="0" />
+      <LineId Id="147" Count="1" />
+      <LineId Id="145" Count="0" />
+      <LineId Id="151" Count="1" />
+      <LineId Id="149" Count="0" />
+      <LineId Id="120" Count="0" />
+      <LineId Id="85" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

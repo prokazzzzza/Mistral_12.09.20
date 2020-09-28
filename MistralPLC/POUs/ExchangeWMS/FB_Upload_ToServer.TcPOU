@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="FB_Upload_ToServer" Id="{3fdf3612-bd53-42e9-ac7f-4dcba34ab627}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Upload_ToServer
+VAR_INPUT
+	bStartstop 			: BOOL;
+	sHost :STRING;
+	sUsername:STRING:=(*'FTPclient';*)'CX-4F6D58';
+	sPassword:STRING:= 'Fabslog8721';
+	sSrcFile:STRING:= '\FTPclient\out\WMS_Line1.in';
+	sDesFile:STRING:= '\in\WMS_Line1.in';
+END_VAR
+VAR_OUTPUT
+	err1 				: BOOL;
+	errid1 				: UDINT;
+	err2				: BOOL;
+	errid2 				: UDINT;
+	err3				: BOOL;
+	errid3				: UDINT;
+	err4				: BOOL;
+	errid4				: UDINT;
+	bSendToWMS_OK       : BOOL;
+END_VAR
+VAR
+	RisingEdge 			: R_TRIG;
+	
+	state				: BYTE;
+	fbFTP_Open1 		: FB_FTP_OpenEX;
+	fbFTPFileUpload1: FB_FTP_FileUpload;
+	fbFTP_Close1 		: FB_FTP_Close;
+	busy1 				: BOOL;
+busy2				: BOOL;
+busy3 				: BOOL;
+busy4 				: BOOL;
+	handle 				: T_HFTP;
+	progress 			: UDINT;
+fbFTP_FileExist:FB_FTP_FileExist;
+bFileExist:BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[RisingEdge(CLK:= bStartstop);
+IF RisingEdge.Q THEN
+	state := 1;
+END_IF
+
+CASE state OF
+	0:
+		;
+
+	1:
+	bSendToWMS_OK :=FALSE;
+		fbFTP_Open1(
+			sNetID:= ,
+			sHost:= sHost,
+			nPort:= 21,
+			sUsername:= sUsername,
+	        sPassword:= sPassword,
+			bExecute:= TRUE,
+			tTimeout:= T#15S,
+			 eMode    := 1,
+			bBusy=> busy1,
+			bError=> err1,
+			nErrId=> errid1,
+			hFTP=> handle);
+
+		IF NOT busy1 AND NOT err1 THEN
+			fbFTP_Open1(bExecute:= FALSE);
+			state := 3;
+		
+				
+		END_IF
+		
+2: 
+fbFTP_FileExist(
+ hFTP:=handle,
+sFile:=sDesFile,
+bExecute:= TRUE,
+	tTimeout:= T#15s,
+	bBusy=> busy4,
+	bError=> err4,
+	nErrId=> errid4,
+	bExist=> bFileExist);
+		
+		IF NOT busy4 AND NOT err4 THEN
+			fbFTP_FileExist(bExecute:= FALSE);
+			IF NOT bFileExist THEN
+			state := 3;
+			ELSE
+				state := 1;
+			END_IF
+		END_IF
+
+		
+		
+		
+		
+	3:
+		fbFTPFileUpload1(
+	sNetID:='' ,
+     hFTP:=handle,
+	sSrcFile:= sSrcFile,
+	sDesFile:=sDesFile,
+	bExecute:= TRUE,
+	tTimeout:= T#15s,
+	bBusy=> busy2,
+	bError=> err2,
+	nErrId=> errid2,
+	nProgress=> progress);
+
+		IF NOT busy2 AND NOT err2 THEN
+			fbFTPFileUpload1(bExecute:= FALSE);
+			state := 4;
+		END_IF
+
+	4:
+		fbFTP_Close1(
+			sNetID:= ,
+			hFTP:= handle,
+			bExecute:= TRUE,
+			tTimeout:= T#15s,
+			bBusy => busy3,
+			bError => err3,
+			nErrId => errid3);
+
+		IF NOT busy3 AND NOT err3 THEN
+			fbFTP_Close1(bExecute:= FALSE);
+			state := 0;
+			bSendToWMS_OK :=TRUE;
+		END_IF
+
+END_CASE
+
+
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Upload_ToServer">
+      <LineId Id="3" Count="9" />
+      <LineId Id="124" Count="0" />
+      <LineId Id="13" Count="17" />
+      <LineId Id="92" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="134" Count="0" />
+      <LineId Id="126" Count="0" />
+      <LineId Id="133" Count="0" />
+      <LineId Id="135" Count="1" />
+      <LineId Id="138" Count="3" />
+      <LineId Id="137" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="147" Count="1" />
+      <LineId Id="152" Count="0" />
+      <LineId Id="149" Count="0" />
+      <LineId Id="153" Count="1" />
+      <LineId Id="151" Count="0" />
+      <LineId Id="150" Count="0" />
+      <LineId Id="128" Count="4" />
+      <LineId Id="33" Count="30" />
+      <LineId Id="125" Count="0" />
+      <LineId Id="64" Count="1" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="192" Count="2" />
+      <LineId Id="191" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

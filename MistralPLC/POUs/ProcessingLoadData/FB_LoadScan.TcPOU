@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="FB_LoadScan" Id="{e6dd006e-bee5-4a08-9e6c-de19f2059279}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_LoadScan
+VAR_INPUT
+	bEnable			:BOOL;
+	iConvStatus		:BYTE;
+	bAutomat		:BOOL;
+	
+	bResetCTU		:BOOL;		
+	bSetVal			:WORD;			
+END_VAR
+VAR_OUTPUT
+	bEnableReadyID	:BOOL;
+	bRequestID		:BOOL;
+	bCountNoRead	:WORD;		//Кол-во несчитываний
+	bOverflowID		:BOOL;		//Переполнение счетчика несчитываний ID
+END_VAR
+VAR
+	fbPulsRequest	:R_TRIG;
+	bStartRequest	:BOOL;
+	fbDelayRead		:TON;
+	WaitingID		:TON;
+	bNoRead			:BOOL;		//Несчитывание
+	bWriteIDgood	:BOOL;
+	fbPulsNoread 	:R_TRIG;
+	CTU 			:CTU;		//Счетчик
+END_VAR
+VAR_IN_OUT	
+	stLoad			:ST_LoadData;
+	bReadScan		:BOOL;
+	sInID			:STRING;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+bStartRequest:= bEnable AND bAutomat AND (iConvStatus=2 OR iConvStatus=3);
+
+bEnableReadyID 	R= NOT bStartRequest;
+bRequestID 	   	R= NOT bStartRequest  OR bReadScan;
+bNoRead 		R= NOT bStartRequest;
+bWriteIDgood    R= NOT bStartRequest;
+
+fbPulsRequest(CLK:=bStartRequest);
+IF fbPulsRequest.Q THEN
+	bRequestID:=TRUE;
+	bReadScan:=FALSE;
+END_IF
+
+fbDelayRead(IN:=bReadScan, PT:=T#0.3S);
+
+WaitingID(IN:= bRequestID , PT:=T#3S);
+bNoRead S= WaitingID.Q ;
+
+fbPulsNoread(CLK:=bNoRead);
+
+CTU(CU:=fbPulsNoread.Q, RESET:=bResetCTU, PV:=bSetVal);
+bCountNoRead:=CTU.CV;
+
+IF bReadScan AND NOT (bCountNoRead>=bSetVal) THEN
+	stLoad.sID:= sInID;
+	
+	IF stLoad.sID<>'' OR fbDelayRead.Q THEN	
+		bWriteIDgood:=TRUE;
+		bReadScan:=FALSE;
+	END_IF	
+END_IF
+bEnableReadyID S= bWriteIDgood OR bNoRead;
+
+IF iConvStatus=0 THEN
+	stLoad.sID:= '';
+	stLoad.sWeight:= '';
+	sInID:='';
+END_IF
+
+(*IF bCountNoRead>=bSetVal THEN bOverflowID:=TRUE;
+	ELSE bOverflowID:=FALSE;
+END_IF*)]]></ST>
+    </Implementation>
+    <LineIds Name="FB_LoadScan">
+      <LineId Id="3" Count="1" />
+      <LineId Id="6" Count="2" />
+      <LineId Id="108" Count="1" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="9" Count="1" />
+      <LineId Id="155" Count="0" />
+      <LineId Id="11" Count="3" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="111" Count="0" />
+      <LineId Id="82" Count="0" />
+      <LineId Id="117" Count="0" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="15" Count="12" />
+      <LineId Id="186" Count="0" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="123" Count="0" />
+      <LineId Id="122" Count="0" />
+      <LineId Id="124" Count="1" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

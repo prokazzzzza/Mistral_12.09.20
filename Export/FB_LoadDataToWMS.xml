@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://www.plcopen.org/xml/tc6_0200">
+  <fileHeader companyName="Beckhoff Automation GmbH" productName="TwinCAT PLC Control" productVersion="3.5.13.20" creationDateTime="2020-09-10T09:40:02.5907467" />
+  <contentHeader name="To_FTP_server" modificationDateTime="2020-09-10T09:40:02.5907467">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="1" y="1" />
+      </fbd>
+      <ld>
+        <scaling x="1" y="1" />
+      </ld>
+      <sfc>
+        <scaling x="1" y="1" />
+      </sfc>
+    </coordinateInfo>
+    <addData>
+      <data name="http://www.3s-software.com/plcopenxml/projectinformation" handleUnknown="implementation">
+        <ProjectInformation />
+      </data>
+    </addData>
+  </contentHeader>
+  <types>
+    <dataTypes />
+    <pous>
+      <pou name="FB_LoadDataToWMS" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="stLoadIn">
+              <type>
+                <derived name="ST_LoadData" />
+              </type>
+            </variable>
+            <variable name="bEnable">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="iConvStatus">
+              <type>
+                <BYTE />
+              </type>
+            </variable>
+            <variable name="bAutomat">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="bMove">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+          </inputVars>
+          <localVars>
+            <variable name="fbStartMove">
+              <type>
+                <derived name="R_TRIG" />
+              </type>
+            </variable>
+            <variable name="fbFinMove">
+              <type>
+                <derived name="F_TRIG" />
+              </type>
+            </variable>
+            <variable name="fbCreateFile">
+              <type>
+                <derived name="FB_CreateMessage" />
+              </type>
+            </variable>
+            <variable name="bStartMove">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="bEndMove">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+            <variable name="fbDelayStartMove">
+              <type>
+                <derived name="TON" />
+              </type>
+            </variable>
+            <variable name="fbDelayFinMove">
+              <type>
+                <derived name="TON" />
+              </type>
+            </variable>
+            <variable name="bStartSend">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+          </localVars>
+          <inOutVars>
+            <variable name="stLoadMove">
+              <type>
+                <derived name="ST_LoadData" />
+              </type>
+            </variable>
+            <variable name="stLoad">
+              <type>
+                <derived name="ST_LoadData" />
+              </type>
+            </variable>
+          </inOutVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml xmlns="http://www.w3.org/1999/xhtml">fbStartMove(CLK:=bMove);
+bStartMove S=fbStartMove.Q;
+fbDelayStartMove(IN:=bStartMove,PT:=T#0.3S);
+IF bStartMove THEN 
+	stLoadMove := stLoadIn;
+	IF stLoadMove.sID=stLoadIn.sID  AND  stLoadMove.sWeight=stLoadIn.sWeight OR fbDelayStartMove.Q  THEN
+		bStartMove:= FALSE;
+	END_IF
+END_IF
+
+
+fbFinMove(CLK:=bMove);
+bEndMove S= fbFinMove.Q;
+fbDelayFinMove(IN:=bEndMove,PT:=T#0.3S);
+IF bEndMove THEN 
+	stLoad := stLoadMove;
+	IF stLoadMove.sID=stLoad.sID   AND  stLoadMove.sWeight=stLoad.sWeight  OR fbDelayFinMove.Q  THEN
+		bEndMove:= FALSE;
+	END_IF
+END_IF
+
+
+bStartSend:=bAutomat AND (iConvStatus=2 OR iConvStatus=3) AND NOT bEndMove;
+fbCreateFile();</xhtml>
+          </ST>
+        </body>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
+            <InterfaceAsPlainText>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">FUNCTION_BLOCK FB_LoadDataToWMS
+VAR_INPUT
+	stLoadIn		:ST_LoadData;
+	bEnable			:BOOL;
+	iConvStatus		:BYTE;
+	bAutomat		:BOOL;
+	bMove			:BOOL;
+	
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	fbStartMove		:R_TRIG;
+	fbFinMove		:F_TRIG;
+	fbCreateFile: FB_CreateMessage;
+	bStartMove:BOOL;
+	bEndMove:BOOL;
+	fbDelayStartMove:TON;
+	fbDelayFinMove:TON;
+	bStartSend: BOOL;
+	
+END_VAR
+VAR_IN_OUT
+	stLoadMove      :ST_LoadData;
+	stLoad			:ST_LoadData;
+
+END_VAR</xhtml>
+            </InterfaceAsPlainText>
+          </data>
+          <data name="http://www.3s-software.com/plcopenxml/objectid" handleUnknown="discard">
+            <ObjectId>cc917973-8442-47c5-b7a7-71cad07ea9ab</ObjectId>
+          </data>
+        </addData>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations />
+  </instances>
+  <addData>
+    <data name="http://www.3s-software.com/plcopenxml/projectstructure" handleUnknown="discard">
+      <ProjectStructure>
+        <Object Name="FB_LoadDataToWMS" ObjectId="cc917973-8442-47c5-b7a7-71cad07ea9ab" />
+      </ProjectStructure>
+    </data>
+  </addData>
+</project>

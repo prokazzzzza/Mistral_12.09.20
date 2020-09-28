@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+  <GVL Name="GVL_bDriveSpeed_3" Id="{9d189149-ebe4-429c-841f-e477ae1e1280}">
+    <Declaration><![CDATA[VAR_GLOBAL
+// Включение второй скорости для секций
+
+bDrive3s01Speed2			AT%Q* :BOOL;
+
+bDrive3s02Speed2			AT%Q* :BOOL;
+
+bDrive3s03Speed2			AT%Q* :BOOL;
+
+bDrive3s04Speed2			AT%Q* :BOOL;
+
+bDrive3s05Speed2			AT%Q* :BOOL;
+
+bDrive3s06Speed2			AT%Q* :BOOL;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

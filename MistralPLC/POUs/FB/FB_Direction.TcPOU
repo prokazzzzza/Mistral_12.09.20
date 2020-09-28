@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="FB_Direction" Id="{e3e4167a-608f-4854-a9cd-c32589cd5b27}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Direction
+VAR_INPUT
+	bAutomat:BOOL;
+	bManual:BOOL;
+	bDirectOn :BOOL;
+	bReverseOn:BOOL;
+	bButtReverse:BOOL;
+END_VAR
+VAR_OUTPUT
+	bSwitchOnDirect:BOOL:=FALSE;
+	bSwitchOnReverse:BOOL:=FALSE;
+END_VAR
+VAR
+	bModeDirect:BOOL;
+	bModeReverse:BOOL;
+	fbPulsButt:R_TRIG;
+	fbDelayOnDirect:TON;
+	fbDelayOffDirect:TON;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+fbDelayOnDirect(IN:=NOT bReverseOn, PT:=T#1S);
+
+IF (bManual OR bAutomat) AND fbDelayOnDirect.Q(*NOT bReverseOn*) THEN
+	bSwitchOnDirect:=TRUE;
+END_IF
+IF NOT (bManual OR bAutomat) THEN 
+	bSwitchOnDirect:=FALSE;
+END_IF
+
+ fbDelayOffDirect(IN:=NOT bDirectOn, PT:=T#1S);   
+
+fbPulsButt(CLK:=bButtReverse  );
+IF fbPulsButt.Q AND bManual AND NOT bModeReverse  THEN
+bModeReverse:=TRUE;
+END_IF
+IF bModeReverse THEN
+	bSwitchOnDirect:=FALSE;
+	IF NOT bSwitchOnDirect AND (*NOT bDirectOn*)fbDelayOffDirect.Q THEN
+		bSwitchOnReverse:=TRUE;
+	END_IF
+END_IF
+
+IF fbPulsButt.Q AND bReverseOn  THEN
+	bSwitchOnReverse:=FALSE;
+	bModeReverse :=FALSE;
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Direction">
+      <LineId Id="75" Count="1" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="24" Count="1" />
+      <LineId Id="79" Count="2" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="27" Count="2" />
+      <LineId Id="31" Count="2" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="37" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <GVL Name="GVL_bSens_4" Id="{3ac3fb76-27b0-4320-ba33-49e77adfcdbf}">
+    <Declaration><![CDATA[VAR_GLOBAL
+// --------------------------------------Список датчиков--------------------------------------------//
+//---------------------------------------Четвертый конвейер-----------------------------------------//
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 6 (EPP2339-0021) X4^Channel 1^Input'}
+bSens4s01D1 AT%I* :BOOL;	// Датчик в конце секции (в прямом направлении)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 6 (EPP2339-0021) X4^Channel 2^Input'}
+bSens4s01D2 AT%I* :BOOL;	// Датчик в конце секции (в обратном направлении)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 6 (EPP2339-0021) X4^Channel 3^Input'}
+bSens4s01D3 AT%I* :BOOL;	// Датчик контроля вил 
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 5 (EPP1004-0061) X4^Channel 1^Input'}
+bSens4s02D1 AT%I* :BOOL;	// Датчик в конце секции (в прямом направлении)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 5 (EPP1004-0061) X4^Channel 2^Input'}
+bSens4s02D2 AT%I* :BOOL;	// Датчик в середине секции 
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 5 (EPP1004-0061) X4^Channel 3^Input'}
+bSens4s03D1 AT%I* :BOOL;	// Датчик в конце секции (в прямом направлении)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 5 (EPP1004-0061) X4^Channel 4^Input'}
+bSens4s03D2 AT%I* :BOOL;	// Датчик в середине секции 
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 4 (EPP2339-0021) X4^Channel 1^Input'}
+bSens4s04D1 AT%I* :BOOL;	// Датчик в конце секции (в прямом направлении)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 4 (EPP2339-0021) X4^Channel 2^Input'}
+bSens4s04D2 AT%I* :BOOL;	// Датчик в середине секции 
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 4 (EPP2339-0021) X4^Channel 3^Input'}
+bSens4s04D3 AT%I* :BOOL;	// Датчик сканирования RFID
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 4 (EPP2339-0021) X4^Channel 4^Input'}
+bSens4s05D1 AT%I* :BOOL;	// Датчик в конце секции (в прямом направлении)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 4 (EPP2339-0021) X4^Channel 5^Input'}
+bSens4s05D2 AT%I* :BOOL;	// Датчик управления двойным движением
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 4 (EPP2339-0021) X4^Channel 6^Input'}
+bSens4s06D1 AT%I* :BOOL;	// Датчик в конце секции (в прямом направлении)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 4 (EPP2339-0021) X4^Channel 7^Input'}
+bSens4s06D2 AT%I* :BOOL;	// Датчик контроля вил
+
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

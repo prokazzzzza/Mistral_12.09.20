@@ -1,0 +1,262 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="Exchange_WMS" Id="{8e55b476-7207-4cf4-9cec-4f76123cdd85}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM Exchange_WMS
+
+VAR_INPUT
+	
+END_VAR
+VAR
+	
+fbFileOpen:FB_FileOpen;
+iStep:INT;
+bFileOpen:BOOL;
+fbPulsWriteMessage:R_TRIG;
+bError1:BOOL;
+nErrId1:UDINT;
+hFile  : UINT;    
+fbFileWrite: FB_FileWrite;
+bError2:BOOL;
+nErrId2:UDINT;
+
+fbFileClose:FB_FileClose;
+bError3:BOOL;
+nErrId3:UDINT;
+
+bSendToWMS:BOOL;
+fbUpload_ToServer:FB_Upload_ToServer;
+
+
+fbTime : FB_LocalSystemTime;
+	System_Time: DT;
+	bEnableTime: BOOL := TRUE;
+tNow : TIME;
+
+sSystemTimeYear:STRING;
+sSystemTimeMonth:STRING;
+
+bSendToWMS_OK: BOOL ;
+fbPulsSend_OK:R_TRIG;
+sSystemTime1:STRING;
+sPathName:STRING;
+sSrcFile:STRING;
+sDesFile:STRING;
+
+fbTail: FB_Tail;
+bMessageReady:BOOL;
+ bReset:BOOL;
+ bShiftBuff:BOOL;
+ sMessageOut: T_MaxString;
+ sMessageOutStore: T_MaxString;
+ bNew:BOOL;
+ bTest:BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+
+fbTime  (bEnable :=bEnableTime , dwCycle :=1);
+bEnableTime := FALSE;
+
+System_Time := SYSTEMTIME_TO_DT (fbTime.systemTime);
+sSystemTime := DT_TO_STRING (System_Time);
+sSystemTime := MID (sSystemTime, 19, 4);
+sSystemTime1 := sSystemTime;
+sSystemTimeYear :=LEFT(sSystemTime,4);
+sSystemTimeMonth:=MID(sSystemTime,2,6);
+sSystemTime := MID (sSystemTime, 11, 9);
+sSystemTime:= REPLACE(sSystemTime,CONCAT('.',sSystemTimeMonth),1,3);
+sSystemTime:= INSERT(sSystemTime,CONCAT(CONCAT('.',sSystemTimeYear),' '),5);
+
+
+
+
+
+
+fbTail(sMessage1:=sMessageOut1,
+	sMessage2:=sMessageOut2,
+	sMessage3:=sMessageOut3,
+	sMessage4:=sMessageOut4,
+    bReset:=bReset,	bMessageReady1:=bMessageReady1,
+	bMessageReady2:=bMessageReady2,
+	bMessageReady3:=bMessageReady3,
+	bMessageReady4:=bMessageReady4,
+	bShiftBuff:=bShiftBuff,sMessageOut:=sMessageOut,bNew:=bNew);
+
+	
+(*	
+IF bNew	THEN
+	IF sMessageOut<>'' THEN
+		bMessageReady:=TRUE;
+	END_IF
+	bNew:=FALSE;
+END_IF
+*)	
+bMessageReady:=(*bNew	*)sMessageOut<>sMessageOutStore AND sMessageOut<>'' AND NOT  bShiftBuff;
+
+fbPulsWriteMessage(CLK:=bMessageReady);
+IF fbPulsWriteMessage.Q THEN
+	
+sMessageOutStore:=sMessageOut;
+//bMessageReady:=FALSE;
+
+sSystemTime1:=REPLACE(sSystemTime1,'_',1, 11);
+sSystemTime1:=REPLACE(sSystemTime1,'-',1, 14);
+sSystemTime1:=REPLACE(sSystemTime1,'-',1, 17);
+sPathName:= INSERT ('C:\FTPclient\out\WMS_.in',sSystemTime1,21 );
+
+
+
+bTest:=TRUE;
+
+	iStep:=1;
+END_IF
+CASE iStep OF
+
+0: ;
+
+1:
+bSendToWMS:=FALSE;
+fbFileOpen(bExecute:= FALSE,);
+fbFileOpen( sPathName :=  sPathName(*'C:\FTPclient\out\WMS_Line1.in'*),  nMode:= FOPEN_MODEWRITE,                                
+            bExecute:= TRUE,tTimeout:=T#3S );
+iStep:=2;
+
+2:
+  fbFileOpen( bExecute := FALSE );
+                IF NOT fbFileOpen.bBusy THEN
+                        IF fbFileOpen.bError THEN
+                                nErrId1 := fbFileOpen.nErrId;
+                                bError1 := TRUE;
+                                iStep := 50;
+                        ELSE
+                                hFile := fbFileOpen.hFile;
+                                iStep := 3;
+                        END_IF
+                END_IF
+				
+3:
+fbFileWrite( bExecute := FALSE );
+                fbFileWrite(  hFile:=hFile,
+                        pWriteBuff:= ADR(sMessageOut), cbWriteLen:= LEN(sMessageOut),
+                        bExecute:=TRUE, tTimeout:=T#3S  );
+                iStep := 4;				
+				
+4:
+fbFileWrite( bExecute := FALSE );
+                 IF NOT fbFileWrite.bBusy THEN
+                        IF fbFileWrite.bError THEN
+                                nErrId2 := fbFileWrite.nErrId;
+                                bError2 := TRUE;
+                                iStep := 50;
+								
+                        ELSE
+                               // IF fbFileRead.bEOF THEN (* Check if the EOF flag ist set *)
+                                 iStep := 5;(* Cleanup: close the destination and source files *)
+                       // sMessageOut:='';
+                         
+                        END_IF
+                END_IF
+5:
+  fbFileClose( bExecute := FALSE );
+                fbFileClose(  hFile:=hFile, bExecute:=TRUE, tTimeout:=T#3S );
+                iStep := 6;
+				
+6:
+                fbFileClose( bExecute := FALSE );
+                IF NOT fbFileClose.bBusy THEN
+                        IF fbFileClose.bError THEN
+                                nErrId3 := fbFileClose.nErrId;
+                                bError3 := TRUE;
+                        END_IF
+                        iStep := 7;
+                        hFile := 0;
+                END_IF		
+		
+7:
+       bSendToWMS:=TRUE;
+		 iStep := 0;
+         bShiftBuff:=TRUE;		
+50:;				
+END_CASE
+sSrcFile:=sPathName;
+
+sDesFile:=CONCAT('\in\', RIGHT(sSrcFile,26));
+
+fbUpload_ToServer(bStartstop:=bSendToWMS,sHost:='10.45.19.159'(*'10.45.19.5'*),sDesFile:=sDesFile ,sSrcFile:=sSrcFile, bSendToWMS_OK=>bSendToWMS_OK );
+
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="Exchange_WMS">
+      <LineId Id="154" Count="2" />
+      <LineId Id="160" Count="1" />
+      <LineId Id="405" Count="0" />
+      <LineId Id="397" Count="7" />
+      <LineId Id="393" Count="3" />
+      <LineId Id="162" Count="0" />
+      <LineId Id="151" Count="0" />
+      <LineId Id="331" Count="0" />
+      <LineId Id="376" Count="3" />
+      <LineId Id="381" Count="3" />
+      <LineId Id="152" Count="0" />
+      <LineId Id="390" Count="0" />
+      <LineId Id="386" Count="0" />
+      <LineId Id="391" Count="1" />
+      <LineId Id="508" Count="0" />
+      <LineId Id="510" Count="2" />
+      <LineId Id="509" Count="0" />
+      <LineId Id="153" Count="0" />
+      <LineId Id="387" Count="0" />
+      <LineId Id="21" Count="2" />
+      <LineId Id="269" Count="0" />
+      <LineId Id="271" Count="0" />
+      <LineId Id="285" Count="4" />
+      <LineId Id="272" Count="4" />
+      <LineId Id="270" Count="0" />
+      <LineId Id="95" Count="1" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="122" Count="0" />
+      <LineId Id="12" Count="1" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="33" Count="9" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="45" Count="1" />
+      <LineId Id="55" Count="3" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="62" Count="5" />
+      <LineId Id="453" Count="0" />
+      <LineId Id="68" Count="3" />
+      <LineId Id="73" Count="1" />
+      <LineId Id="60" Count="1" />
+      <LineId Id="97" Count="2" />
+      <LineId Id="115" Count="0" />
+      <LineId Id="100" Count="8" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="121" Count="0" />
+      <LineId Id="114" Count="0" />
+      <LineId Id="389" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="264" Count="0" />
+      <LineId Id="268" Count="0" />
+      <LineId Id="265" Count="0" />
+      <LineId Id="124" Count="0" />
+      <LineId Id="123" Count="0" />
+      <LineId Id="182" Count="1" />
+      <LineId Id="181" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

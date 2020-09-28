@@ -1,0 +1,253 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="FB_ConvPlaceDouble" Id="{96ef30b5-9b26-4ac2-8652-5ac69ed19d02}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ConvPlaceDouble
+VAR_INPUT
+	bStopSecPlace: BOOL;
+	bStartAutomat: BOOL;
+	bAutomat: BOOL;
+	bManual: BOOL;
+	bReset: BOOL := FALSE;
+	bStop: BOOL;
+	bEnableMove: BOOL;
+	ConvStatusPrev1: BYTE;
+	ConvStatusPrev2: BYTE;
+	bDriveMove: BOOL;
+	bButtConv: BOOL;
+	bButtConvRev: BOOL;
+	bButtMove: BOOL;
+	bSens1: BOOL;
+	bSens2: BOOL;
+	bSens3: BOOL := TRUE;
+	bSensFork: BOOL := FALSE;
+	tBusy: TIME := TIME#10ms;
+	tFree: TIME := TIME#2s800ms;
+	tLongMove: TIME := TIME#30s0ms;
+	bBuffering: BOOL;
+	 bDirect: BOOL;
+	bReverse: BOOL;
+	ConvStatusNext1: BYTE;
+	ConvStatusNext2: BYTE;
+	bEnableMove3:BOOL;
+	bEnableMove2:BOOL;
+	
+	bSensFreePrev1:BOOL;
+	bSensFreePrev2:BOOL;
+END_VAR
+VAR_OUTPUT
+	bDrive: BOOL;
+	bDriveReverse: BOOL;
+	ConvStatus2: BYTE;
+	ConvStatus1: BYTE;
+	bDrivePrev: BOOL;
+	bLongMove1: BOOL;
+	bLongMove2: BOOL;
+	bLongMove3: BOOL;
+	bSensFree1:BOOL;
+	bSensFree2:BOOL;
+END_VAR
+VAR
+	fbBusy1: FB_Busy1;
+	fbBusy2: FB_Busy1;
+	fbBusyFork: FB_Busy2;
+	fbButt: FB_ButtonToggle;
+	fbButtReverse: FB_ButtonToggle;
+	bDriveManu: BOOL;
+	bResManu: BOOL;
+	bDriveManuReverse: BOOL;
+	bDriveConv1: BOOL;
+	bDriveConv2: BOOL;
+	bDriveConv3: BOOL;
+	bDriveConv: BOOL;
+	bDrivePrev1: BOOL;
+	bDrivePrev2: BOOL;
+	fbLongMove1: TON;
+	fbLongMove2: TON;
+	fbLongMove3: TON;
+	fbButtMove: R_TRIG;
+	fbStartAutomat: R_TRIG;
+	bStartConv: BOOL;
+	fbConvBusy1Puls: R_TRIG;
+	fbConvBusy2Puls: R_TRIG;
+	fbStartTimer: TON;
+	fbFinStartAutomat: F_TRIG;
+	bPermMove1: BOOL;
+	bPermMove2: BOOL;
+	bPermMove3: BOOL;
+
+END_VAR
+VAR_IN_OUT
+	bMove1: BOOL;
+	bMove2: BOOL;
+	bMove3: BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbBusy1 ( bSens := bSens1, tFree := tFree, tBusy := tBusy, Reset := bReset);
+fbBusy2 ( bSens := bSens2, tFree := tFree, tBusy := tBusy, Reset := bReset);
+fbBusyFork( bSens:= bSensFork,  tFree:=   T#10S ,   tBusy:= T#0S , Reset := bReset ) ;
+
+ bSensFree1:= bSens1;    
+ bSensFree2:= bSens2; 
+
+IF NOT fbBusy1.ConvBusy THEN ConvStatus1 := 0;
+	ELSE
+		ConvStatus1 := 2;
+END_IF
+
+IF NOT fbBusy2.ConvBusy  THEN ConvStatus2 := 0;
+	ELSE
+		ConvStatus2 := 2;
+END_IF
+
+bDrive := NOT bStop AND (bDriveMove OR bDriveConv OR bDriveManu OR bStartConv);
+bDriveReverse := NOT bStop AND bDriveManuReverse;
+
+bResManu := bReset OR NOT bManual;
+fbButt (bButt := bButtConv AND bManual AND NOT bDriveManuReverse AND bDirect, bReset := bResManu  OR NOT bDirect); 
+bDriveManu := fbButt.bOutB;
+fbButtReverse (bButt := bButtConvRev AND bManual AND NOT bDriveManu AND bReverse, bReset := bResManu  OR NOT bReverse);
+ bDriveManuReverse := fbButtReverse.bOutB;
+
+(* Перемещения*)
+(* Условия включения перемещения*)
+bPermMove1:= ConvStatusPrev1=0 AND ConvStatus2=0  AND NOT bMove2  AND NOT bMove3;
+
+IF  bAutomat AND bEnableMove AND bPermMove1 AND (ConvStatusPrev2 = 2 OR ConvStatusPrev2 = 3) AND ConvStatus1 = 0 AND  NOT fbBusyFork.ConvBusy
+	THEN  bMove1 := TRUE;
+END_IF
+
+(* Выключение перемещения bMove1*)
+IF  bMove1 AND (ConvStatusPrev2 = 0 OR bStopSecPlace (*OR bSensFreePrev2*)) AND (ConvStatus1 = 2 OR ConvStatus1 = 3) THEN bMove1 := FALSE;
+END_IF
+
+
+
+
+
+bPermMove2 := (( ConvStatusPrev1=2 OR ConvStatusPrev1=3) AND ConvStatus1=0 OR  ConvStatusPrev1=0 AND  (ConvStatus1 = 2 OR
+ConvStatus1 = 3)) AND NOT bMove1  AND NOT bMove3 AND bEnableMove2;
+
+IF  bAutomat AND bEnableMove AND bPermMove2 AND (ConvStatusPrev2 = 2 OR ConvStatusPrev2 = 3) AND ConvStatus2 = 0 
+	THEN  bMove2 := TRUE;
+END_IF
+
+
+(* Выключение перемещения bMove2*)
+IF  bMove2 AND (ConvStatusPrev2 = 0 OR bStopSecPlace (*OR bSensFreePrev2*)) AND (ConvStatus2 = 2 OR ConvStatus2 = 3) THEN bMove2 := FALSE;
+END_IF
+
+//bPermMove3 := (ConvStatusNext1=0 AND ConvStatusNext2=0  OR (ConvStatusNext1=2 OR ConvStatusNext1=3) AND ConvStatusNext2=0 )
+//AND NOT bMove1 AND NOT bMove2;
+bPermMove3 := (NOT (( ConvStatusPrev2=2 OR ConvStatusPrev2=3) AND ConvStatusPrev1=0) AND NOT bBuffering OR
+bBuffering AND 	bEnableMove3)  AND NOT bMove1 AND NOT bMove2;
+
+IF  bAutomat AND bEnableMove AND bPermMove3 AND (ConvStatus1 = 2 OR ConvStatus1 = 3) AND ConvStatus2 = 0 
+	THEN bMove3 := TRUE;
+END_IF
+
+(* Выключение перемещения bMove3*)
+IF  bMove3 AND (ConvStatus1 = 0 OR bStopSecPlace (*OR bSens1*)) AND (ConvStatus2 = 2 OR ConvStatus2 = 3) THEN bMove3 := FALSE;
+END_IF
+
+
+
+
+(* Включение двигателей *)
+bDriveConv1 := NOT bStop AND bMove1 AND NOT (ConvStatus1 = 2 OR ConvStatus1 = 3);
+bDriveConv2 := NOT bStop AND bMove2 AND NOT (ConvStatus2 = 2 OR ConvStatus2 = 3);
+bDriveConv3 := NOT bStop AND bMove3 AND NOT (ConvStatus2 = 2 OR ConvStatus2 = 3);
+	
+bDriveConv := bDriveConv1 OR bDriveConv2 OR bDriveConv3;
+
+bDrivePrev1 := NOT bStop AND bMove1 AND NOT (ConvStatus1 = 2 OR ConvStatus1 = 3) AND NOT (ConvStatusPrev2 = 0);
+bDrivePrev2 := NOT bStop AND bMove2 AND NOT (ConvStatus2 = 2 OR ConvStatus2 = 3) AND NOT ((ConvStatusPrev1 = 0)AND(ConvStatusPrev2 = 0)) ;
+	
+bDrivePrev := bDrivePrev1 OR bDrivePrev2 ;
+
+(* Долгое перемещение*)
+fbLongMove1(IN := NOT bStop AND bMove1, PT := tLongMove);
+bLongMove1 := fbLongMove1.Q;
+fbLongMove2(IN := NOT bStop AND bMove2, PT := tLongMove);
+bLongMove2 := fbLongMove2.Q;
+fbLongMove3(IN := NOT bStop AND bMove3, PT := tLongMove);
+bLongMove3 := fbLongMove3.Q;
+
+(* Включение-выключение перемещения кнопкой*)
+fbButtMove (CLK :=bButtMove (*AND bManual*));
+IF fbButtMove.Q THEN 
+	IF NOT bMove2 AND bManual THEN bMove2 := TRUE;
+		ELSIF bMove2 THEN  
+      bMove2 := FALSE;
+	END_IF
+   // bButtMove := FALSE;
+END_IF
+
+IF  bReset THEN bMove1 := FALSE; bMove2 := FALSE; bMove3 := FALSE; bStartConv := FALSE; 
+	
+END_IF
+
+(*
+(* Начальный режим*)
+	fbStartAutomat (CLK := bStartAutomat);
+IF 	fbStartAutomat.Q THEN 
+IF NOT bReverse 
+THEN 
+IF (ConvStatus1=2 OR ConvStatus1=3)AND ConvStatusNext =1          THEN
+	bStartConvReverse := TRUE;
+END_IF
+
+ELSE  bStartConvReverse := TRUE;
+(* IF  NOT (ConvStatus1=2 OR ConvStatus1=3)AND ConvStatusNext =1 
+THEN  bStartConvReverse := TRUE;
+END_IF*)
+END_IF
+END_IF
+
+	fbConvBusy1Puls (CLK := fbBusy1.ConvBusy);
+//	fbConvBusy2Puls (CLK := fbBusy2.ConvBusy);
+
+//	fbStartTimer (IN := bStartConv, PT := tStartTimer);
+	fbStartTimerReverse (IN := bStartConvReverse, PT := tStartTimer);
+
+(*IF    (bFinalConv  AND (ConvStatus = 3 OR ConvStatus = 2) OR NOT bFinalConv AND ((ConvStatus = 3 OR ConvStatus = 2) AND (ConvStatusNext = 3 OR ConvStatusNext = 2)) OR fbConvBusy2Puls.Q OR fbStartTimer.Q)
+OR NOT bStartAutomat THEN  bStartConv := FALSE;
+END_IF*)
+
+IF 	  (bStartConvReverse AND (bFinalConvReverse AND (ConvStatus = 3 OR ConvStatus = 1) OR NOT bFinalConvReverse AND ((ConvStatus = 3 OR ConvStatus = 1) AND (ConvStatusPrev = 3 OR ConvStatusPrev = 1)) OR fbConvBusy1Puls.Q OR fbStartTimerReverse.Q))
+OR NOT bStartAutomat THEN bStartConvReverse := FALSE;
+END_IF
+
+fbFinStartAutomat(CLK:=bStartAutomat);
+IF fbFinStartAutomat.Q AND (ConvStatus1=2 OR ConvStatus1=3)AND ConvStatusNext =1   THEN
+	bMoveReverse:=TRUE;
+END_IF
+*)
+]]></ST>
+    </Implementation>
+    <LineIds Name="FB_ConvPlaceDouble">
+      <LineId Id="3" Count="2" />
+      <LineId Id="591" Count="0" />
+      <LineId Id="194" Count="0" />
+      <LineId Id="590" Count="0" />
+      <LineId Id="589" Count="0" />
+      <LineId Id="6" Count="14" />
+      <LineId Id="265" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="266" Count="0" />
+      <LineId Id="22" Count="11" />
+      <LineId Id="508" Count="0" />
+      <LineId Id="507" Count="0" />
+      <LineId Id="502" Count="1" />
+      <LineId Id="34" Count="6" />
+      <LineId Id="493" Count="0" />
+      <LineId Id="41" Count="6" />
+      <LineId Id="415" Count="0" />
+      <LineId Id="417" Count="0" />
+      <LineId Id="48" Count="7" />
+      <LineId Id="497" Count="2" />
+      <LineId Id="56" Count="70" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

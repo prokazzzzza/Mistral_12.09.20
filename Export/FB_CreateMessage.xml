@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://www.plcopen.org/xml/tc6_0200">
+  <fileHeader companyName="Beckhoff Automation GmbH" productName="TwinCAT PLC Control" productVersion="3.5.13.20" creationDateTime="2020-09-10T09:40:10.3057489" />
+  <contentHeader name="To_FTP_server" modificationDateTime="2020-09-10T09:40:10.3057489">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="1" y="1" />
+      </fbd>
+      <ld>
+        <scaling x="1" y="1" />
+      </ld>
+      <sfc>
+        <scaling x="1" y="1" />
+      </sfc>
+    </coordinateInfo>
+    <addData>
+      <data name="http://www.3s-software.com/plcopenxml/projectinformation" handleUnknown="implementation">
+        <ProjectInformation />
+      </data>
+    </addData>
+  </contentHeader>
+  <types>
+    <dataTypes />
+    <pous>
+      <pou name="FB_CreateMessage" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="stLoad">
+              <type>
+                <derived name="ST_LoadData" />
+              </type>
+            </variable>
+            <variable name="bCreateMessage">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
+          </inputVars>
+          <outputVars>
+            <variable name="sMessageOut">
+              <type>
+                <derived name="T_MaxString" />
+              </type>
+            </variable>
+            <variable name="bMessageReady">
+              <type>
+                <BOOL />
+              </type>
+              <initialValue>
+                <simpleValue value="FALSE" />
+              </initialValue>
+            </variable>
+          </outputVars>
+          <localVars>
+            <variable name="sTemplateMessage">
+              <type>
+                <derived name="T_MaxString" />
+              </type>
+              <initialValue>
+                <simpleValue value="'|MsgNam=WMS.TEGEW|TrxId=|RFIDNAM=|DzTrn=|ArtGewBru=|'" />
+              </initialValue>
+            </variable>
+            <variable name="fbPulsCreateMessage">
+              <type>
+                <derived name="R_TRIG" />
+              </type>
+            </variable>
+            <variable name="sTrxId">
+              <type>
+                <string />
+              </type>
+            </variable>
+            <variable name="i">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="sMessage">
+              <type>
+                <derived name="T_MaxString" />
+              </type>
+            </variable>
+            <variable name="iPosRFID">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="iPosTime">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="iPosBrutto">
+              <type>
+                <INT />
+              </type>
+            </variable>
+            <variable name="fbTime">
+              <type>
+                <derived name="FB_LocalSystemTime" />
+              </type>
+            </variable>
+            <variable name="System_Time">
+              <type>
+                <DT />
+              </type>
+            </variable>
+            <variable name="bEnableTime">
+              <type>
+                <BOOL />
+              </type>
+              <initialValue>
+                <simpleValue value="TRUE" />
+              </initialValue>
+            </variable>
+            <variable name="tNow">
+              <type>
+                <TIME />
+              </type>
+            </variable>
+            <variable name="sSystemTime">
+              <type>
+                <string />
+              </type>
+            </variable>
+            <variable name="sSystemTimeYear">
+              <type>
+                <string />
+              </type>
+            </variable>
+            <variable name="sSystemTimeMonth">
+              <type>
+                <string />
+              </type>
+            </variable>
+            <variable name="fbFileOpen">
+              <type>
+                <derived name="FB_FileOpen" />
+              </type>
+            </variable>
+          </localVars>
+          <localVars persistent="true">
+            <variable name="iCountTrxId">
+              <type>
+                <UINT />
+              </type>
+            </variable>
+          </localVars>
+        </interface>
+        <body>
+          <ST>
+            <xhtml xmlns="http://www.w3.org/1999/xhtml">fbTime  (bEnable :=bEnableTime , dwCycle :=1);
+bEnableTime := FALSE;
+
+System_Time := SYSTEMTIME_TO_DT (fbTime.systemTime);
+sSystemTime := DT_TO_STRING (System_Time);
+sSystemTime := MID (sSystemTime, 19, 4);
+sSystemTimeYear :=LEFT(sSystemTime,4);
+sSystemTimeMonth:=MID(sSystemTime,2,6);
+sSystemTime := MID (sSystemTime, 11, 9);
+sSystemTime:= REPLACE(sSystemTime,CONCAT('.',sSystemTimeMonth),1,3);
+sSystemTime:= INSERT(sSystemTime,CONCAT(CONCAT('.',sSystemTimeYear),' '),5);
+
+
+
+
+fbPulsCreateMessage(CLK:=bCreateMessage);
+
+IF fbPulsCreateMessage.Q THEN
+	iCountTrxId:= iCountTrxId+1;
+	i:=1;
+END_IF
+CASE i OF
+	0:  ;
+	
+	1:
+bMessageReady:=FALSE;	
+sTrxId:= INT_TO_STRING(iCountTrxId);	
+
+sMessage:= INSERT(sTemplateMessage,	sTrxId,24);
+iPosRFID:= FIND(sMessage,'RFIDNAM=');
+sMessage:= INSERT(sMessage,	stLoad.sID,iPosRFID+7);
+iPosTime:= FIND(sMessage,'DzTrn=');
+sMessage:= INSERT(sMessage,	sSystemTime,iPosTime+5);
+iPosBrutto:= FIND(sMessage,'ArtGewBru=');
+sMessage:= INSERT(sMessage,	stLoad.sWeight,iPosBrutto+9);
+
+	i:=3;
+	
+	3:
+sMessageOut:=	sMessage;
+IF 	sMessageOut=sMessage THEN
+	bMessageReady:=TRUE;
+	i:=0;
+END_IF
+
+	
+END_CASE</xhtml>
+          </ST>
+        </body>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/interfaceasplaintext" handleUnknown="implementation">
+            <InterfaceAsPlainText>
+              <xhtml xmlns="http://www.w3.org/1999/xhtml">FUNCTION_BLOCK FB_CreateMessage
+VAR_INPUT
+	stLoad		:ST_LoadData;
+	bCreateMessage :BOOL;
+END_VAR
+VAR_OUTPUT
+	sMessageOut:T_MaxString;
+	bMessageReady:BOOL:=FALSE;
+END_VAR
+VAR
+sTemplateMessage:T_MaxString:='|MsgNam=WMS.TEGEW|TrxId=|RFIDNAM=|DzTrn=|ArtGewBru=|';
+fbPulsCreateMessage:R_TRIG;
+sTrxId:STRING;
+i :INT;
+sMessage :T_MaxString;
+iPosRFID:INT;
+iPosTime:INT;
+iPosBrutto:INT;
+	fbTime : FB_LocalSystemTime;
+	System_Time: DT;
+	bEnableTime: BOOL := TRUE;
+tNow : TIME;
+sSystemTime:STRING;
+sSystemTimeYear:STRING;
+sSystemTimeMonth:STRING;
+
+fbFileOpen:FB_FileOpen;
+END_VAR
+VAR PERSISTENT
+iCountTrxId: UINT;
+END_VAR</xhtml>
+            </InterfaceAsPlainText>
+          </data>
+          <data name="http://www.3s-software.com/plcopenxml/objectid" handleUnknown="discard">
+            <ObjectId>4181f478-1eed-4199-a4d7-37d8337f00dd</ObjectId>
+          </data>
+        </addData>
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations />
+  </instances>
+  <addData>
+    <data name="http://www.3s-software.com/plcopenxml/projectstructure" handleUnknown="discard">
+      <ProjectStructure>
+        <Object Name="FB_CreateMessage" ObjectId="4181f478-1eed-4199-a4d7-37d8337f00dd" />
+      </ProjectStructure>
+    </data>
+  </addData>
+</project>

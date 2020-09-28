@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <GVL Name="GVL_bMove_3" Id="{24c31cde-f25a-4637-97f9-dcead9a4b557}">
+    <Declaration><![CDATA[VAR_GLOBAL
+// Прямое движение
+bMove3s01_s02_1		:BOOL;
+bMove3s02_1_s02_2	:BOOL;
+
+bMove3s02_2_s03_1	:BOOL;
+bMove3s02_s03		:BOOL;
+bMove3s03_1_s03_2	:BOOL;
+
+bMove3s03_2_s04_1	:BOOL;
+bMove3s03_s04		:BOOL;
+bMove3s04_1_s04_2	:BOOL;
+
+bMove3s04_2_s05		:BOOL;
+bMove3s05_s06		:BOOL;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

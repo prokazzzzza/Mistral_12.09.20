@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="ConvLine2" Id="{efcfff5e-7bfa-4f95-adf4-77f504fb0b93}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM ConvLine2
+VAR_INPUT
+	bAutomat		:BOOL;
+	bManual			:BOOL;
+	bStop			:BOOL;
+	bReset			:BOOL := FALSE;
+	bDirect			:BOOL;
+	bReverse		:BOOL;
+	bBuffering		:BOOL;
+END_VAR
+VAR
+	fbS1			:FB_ConvPlace;
+	fbS2			:FB_ConvPlaceDouble;
+	fbS3			:FB_ConvPlaceDouble;
+	fbS4			:FB_ConvPlaceDouble;
+	fbS5			:FB_ConvPlace;
+	fbS6			:FB_ConvPlace;
+	bMove1			:BOOL;
+	bMove2			:BOOL;
+	bDriveMoveS1	:BOOL;
+	bDriveMoveS2	:BOOL;
+	bEnableMoveToS1	:BOOL :=TRUE;
+	bEnableMoveToS2	:BOOL;
+	bEnableMoveToS3	:BOOL;
+	bEnableMoveToS4	:BOOL;
+	bEnableMoveToS5	:BOOL;
+	bEnableMoveToS6	:BOOL;
+	bEnableRead		:BOOL;
+	bEnableWeight	:BOOL;
+	fbLoadScan		:FB_LoadScan;
+	fbLoadWeight	:FB_LoadWeight;
+	bEnableReadyID	:BOOL;
+	bEnableReadyData:BOOL;
+	ConvStatusPrev 	:BYTE;
+	bSensFreePrevS1 :BOOL;
+	bSensFreePrevS5 :BOOL;
+	bSensFreePrevS6 :BOOL;
+	
+	bCountNoRead_ID2		:WORD;		//Кол-во несчитываний RFID
+	bSetVal_ID2				:WORD :=10;	//Заданное значение счетчика (максимально допустимое для несчитываний)
+	bResetCTU_ID2			:BOOL;		//Сброс счетчика несчитываний
+	
+	bCountNoRead_Weight2	:WORD;		//Кол-во несчитываний RFID
+	bSetVal_Weight2			:WORD :=10;	//Заданное значение счетчика (максимально допустимое для несчитываний)
+	bResetCTU_Weight2		:BOOL;		//Сброс счетчика несчитываний
+	
+	fbLoadDataToWMS: FB_LoadDataToWMS;
+	
+	
+	bEnableMove3_2:BOOL;
+	bEnableMove3_3:BOOL;
+	bEnableMove3_4:BOOL;
+	
+	fbFallMove1:R_TRIG;
+	bLineFree:BOOL;
+	fbFreeS6:R_TRIG;
+	
+END_VAR
+VAR PERSISTENT
+	iCounterPallets:INT;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+
+
+
+
+fbS1 ( bAutomat:=bAutomat, bManual:=bManual,bStop:=bStop,bReset:=bReset,tBusy:=T#6S, bDirect:=bDirect	,bReverse:=bReverse,
+       	bDriveMove:=fbS2.bDrivePrev, bSens1:=bSens2s01D2, bSens2:=bSens2s01D1, bFirstPlace:=TRUE,
+       	bSensFork:= bSens2s01D3, bButtConv:= bButt2s01,bButtConvRev:=bButt2s01Rev,
+	  	bMove:=bMove1,ConvStatusPrev:=ConvStatusPrev, bEnableMove := bEnableMoveToS1, bSensFreePrev := bSensFreePrevS1);
+		bSensFreePrevS1 := fbS1.ConvStatus = 0;
+		
+	  	bEnableMoveToS2:= NOT bMove2s02_2_s03_1 AND NOT bMove2s02_s03;
+	  
+		bLineFree:= fbS3.ConvStatus1=0 AND fbS3.ConvStatus2=0 AND 
+      fbS4.ConvStatus1=0 AND fbS4.ConvStatus2=0 AND NOT (bMove2s02_2_s03_1 OR bMove2s02_s03 OR bMove2s03_1_s03_2
+      OR bMove2s03_2_s04_1 OR bMove2s03_s04 OR bMove2s04_1_s04_2  OR bMove2s05_s06 OR bMove2s04_2_s05);	 
+
+		
+		
+	 IF bLineFree AND fbS6.ConvStatus=0 AND fbS5.ConvStatus=0 THEN
+	 iCounterPallets:=0;
+ END_IF
+	  
+		fbFallMove1(CLK:=bMove2s02_2_s03_1 OR bMove2s02_s03 )  ;
+IF fbFallMove1.Q THEN
+	IF bMove2s02_2_s03_1 THEN
+iCounterPallets:=iCounterPallets +1;
+ELSIF  bMove2s02_s03 THEN 	
+	iCounterPallets:=iCounterPallets +2;
+END_IF	
+END_IF
+		fbFreeS6(CLK:=fbS6.ConvStatus=0);
+IF fbFreeS6.Q AND iCounterPallets>0 THEN
+iCounterPallets:=iCounterPallets -1;	
+END_IF
+
+		
+		bEnableMove3_2 := (*(fbS6.ConvStatus=0 OR fbS5.ConvStatus=0) AND bLineFree OR *)iCounterPallets<2;
+	//  fbDelayEnableMove3_2(IN:=bEnableMove3_2, PT:=T#0.3S);
+			
+		
+		
+		
+fbS2 ( bAutomat:=bAutomat, bManual:=bManual,bStop:=bStop,bReset:=bReset, bEnableMove:=bEnableMoveToS2,bBuffering:=bBuffering,
+        bDriveMove:=fbS3.bDrivePrev, bSens1:=bSens2s02D2, bSens2:=bSens2s02D1,bSensFork:= bSens2s01D3,ConvStatusPrev1:=0,
+        ConvStatusPrev2:=fbS1.ConvStatus, bButtConv:= bButt2s02, bButtConvRev:=bButt2s02Rev, bButtMove:=bButt2s01_s02,
+        bDirect:=bDirect	,bReverse:=bReverse,
+		ConvStatusNext1:= fbS3.ConvStatus1, ConvStatusNext2:= fbS3.ConvStatus2,
+	    bMove1:=bMove2s01_s02_1, bMove2:=bMove2s01_s02, bMove3:=bMove2s02_1_s02_2, 
+        bEnableMove3:=bEnableMove3_2, bEnableMove2:= iCounterPallets>1, 
+        bLongMove1=> bLongMove2s01_s02_1,bLongMove3=> bLongMove2s02_1_s02_2 );
+
+	    bEnableMoveToS3:= NOT bMove2s03_2_s04_1 AND NOT bMove2s03_s04 AND NOT bMove2s01_s02_1 AND NOT bMove2s02_1_s02_2;
+ 
+		
+			bEnableMove3_3 := (fbS6.ConvStatus=0 OR fbS5.ConvStatus=0) AND fbS4.ConvStatus1=0 AND fbS4.ConvStatus2=0 
+       AND NOT (bMove2s03_2_s04_1 OR bMove2s03_s04 OR bMove2s04_1_s04_2 OR bMove2s05_s06 OR bMove2s04_2_s05);
+		
+		
+		
+fbS3 ( bAutomat:=bAutomat, bManual:=bManual,bStop:=bStop,bReset:=bReset, bEnableMove:=bEnableMoveToS3,bBuffering:=bBuffering,
+        bDriveMove:=fbS4.bDrivePrev, bSens1:=bSens2s03D2, bSens2:=bSens2s03D1,ConvStatusPrev1:=fbS2.ConvStatus1,
+        ConvStatusPrev2:=fbS2.ConvStatus2, bButtConv:= bButt2s03, bButtConvRev:=bButt2s03Rev, bButtMove:=bButt2s02_s03, 
+		 bDirect:=bDirect	,bReverse:=bReverse,
+	    bMove1:=bMove2s02_2_s03_1, bMove2:=bMove2s02_s03, bMove3:=bMove2s03_1_s03_2, 
+        ConvStatusNext1:= fbS4.ConvStatus1, ConvStatusNext2:= fbS4.ConvStatus2,    
+         bEnableMove3:=bEnableMove3_4,  bEnableMove2:= TRUE,  //bSensFreePrev1:=fbS2.bSensFree1, bSensFreePrev2:=fbS2.bSensFree2,
+         bLongMove1=> bLongMove2s02_2_s03_1,bLongMove2=>bLongMove2s02_s03, bLongMove3=> bLongMove2s03_1_s03_2   );	  
+		
+	    bEnableMoveToS4:= NOT bMove2s04_2_s05 AND NOT bMove2s02_2_s03_1 AND NOT bMove2s03_1_s03_2;
+		
+		
+		bEnableMove3_4 := fbS6.ConvStatus=0 OR fbS5.ConvStatus=0 AND NOT (bMove2s05_s06 OR bMove2s04_2_s05);
+		
+ 			
+		
+		
+fbS4 ( bAutomat:=bAutomat, bManual:=bManual,bStop:=bStop,bReset:=bReset, bEnableMove:=bEnableMoveToS4,bBuffering:=bBuffering,
+        bDriveMove:=fbS5.bDrivePrev  AND bSens2s05D2, bSens1:=bSens2s04D2, bSens2:=bSens2s04D1,ConvStatusPrev1:=fbS3.ConvStatus1,
+        ConvStatusPrev2:=fbS3.ConvStatus2, bButtConv:= bButt2s04, bButtConvRev:=bButt2s04Rev, bButtMove:=bButt2s03_s04, 
+		 bDirect:=bDirect	,bReverse:=bReverse,
+	    bMove1:=bMove2s03_2_s04_1, bMove2:=bMove2s03_s04, bMove3:=bMove2s04_1_s04_2, 
+		ConvStatusNext1:= fbS5.ConvStatus,
+          bEnableMove3:=bEnableMove3_4,  bEnableMove2:= TRUE,  //bSensFreePrev1:=fbS3.bSensFree1, bSensFreePrev2:=fbS3.bSensFree2,
+         bLongMove1=>bLongMove2s03_2_s04_1,bLongMove2=>bLongMove2s03_s04, bLongMove3=> bLongMove2s04_1_s04_2  );	  
+	
+  
+		
+		
+		
+		bEnableRead := NOT bMove2s05_s06 AND NOT bMove2s03_2_s04_1 AND NOT bMove2s04_1_s04_2 AND NOT bMove2s03_s04;
+		
+fbLoadScan (bAutomat:=bAutomat,bEnable:=bEnableRead, iConvStatus:=fbS4.ConvStatus2, 
+        sInID:=sScanID_2, stLoad:=stLoadS4_2, bReadScan:=bReadScan_2, 
+        bRequestID=>bRequestID_2,bEnableReadyID=>bEnableReadyID, bOverflowID=>bOverflow_CTU_ID2,
+		bSetVal:=bSetVal_ID2, bResetCTU:=bResetCTU_ID2, bCountNoRead=>bCountNoRead_ID2);		 
+		
+						
+	    bEnableMoveToS5:= NOT bMove2s05_s06 AND NOT bMove2s03_2_s04_1 AND NOT bMove2s04_1_s04_2  AND bEnableReadyID;
+	  
+fbS5 ( bAutomat:=bAutomat, bManual:=bManual,bStop:=bStop,bReset:=bReset, bEnableMove:= bEnableMoveToS5,
+        bDriveMove:=fbS6.bDrivePrev, bSens1:=bSens2s05D2, bSens2:=bSens2s05D1, bStopSecPlace:=TRUE,
+        bButtConv:= bButt2s05,bButtConvRev:=bButt2s05Rev, ConvStatusPrev := fbS4.ConvStatus2,
+		bSensFreePrev:= bSens2s04D1, bDirect:=bDirect	,bReverse:=bReverse,
+	    bMove:=bMove2s04_2_s05, bLongMove=>bLongMove2s04_2_s05, );  
+	  	
+		
+		bEnableWeight := NOT bMove2s04_2_s05 AND NOT bMove2s05_s06 ;
+		
+fbLoadWeight (bAutomat:=bAutomat,bEnable:=bEnableWeight,bMove:=bMove2s04_2_s05, iConvStatus:=fbS5.ConvStatus, stLoadIn:=stLoadS4_2,
+        (*sInWeight:=sWeight_1*)rInWeight:= Massa_2_Gramms   ,  stLoad:=stLoadS5_2, stLoadMove:=stLoadS4_5_2, 
+       (* bRequestWeight=>bRequestWeight_1,*) bEnableReadyData=>bEnableReadyData, bOverflowWeight=>bOverflow_CTU_Weight2,
+		  bCountNoReadWeight=>bCountNoRead_Weight2, bSetValWeight:=bSetVal_Weight2, bResetCTUWeight:=bResetCTU_Weight2);	
+		
+			
+	    bEnableMoveToS6:= NOT bMove2s04_2_s05   AND bEnableReadyData ;
+	  
+fbS6 ( bAutomat:=bAutomat, bManual:=bManual,bStop:=bStop,bReset:=bReset, bEnableMove:= bEnableMoveToS6,
+        bSens1:=TRUE, bSens2:=bSens2s06D1, bSensFork:= bSens2s06D2, bButtConv:= bButt2s06, bButtConvRev:=bButt2s06Rev,
+		 bDirect:=bDirect	,bReverse:=bReverse,  bLastPlace:=TRUE,
+	    bMove:=bMove2s05_s06,ConvStatusPrev := fbS5.ConvStatus,bSensFreePrev := bSensFreePrevS6, bLongMove=>bLongMove2s05_1s06,);  
+		
+		bSensFreePrevS6 := fbS6.ConvStatus = 0;
+		
+		
+fbLoadDataToWMS(bAutomat:=bAutomat,stLoadIn:=stLoadS5_2, bEnable:=NOT bMove2s05_s06, 
+iConvStatus:=fbS6.ConvStatus, bMove	:=bMove2s05_s06, stLoadMove:=  stLoadS5_6_2, stLoad:=stLoadS6_2,
+sMessageOut=>sMessageOut2, bMessageReady:=bMessageReady2	);			
+		
+	  
+bDrive2s01M1    := fbS1.bDrive 		AND bDirect ;
+bDrive2s01M1Rev := fbS1.bDriveRev 		AND bReverse AND bSens2s01D2;
+bDrive2s02M1    := fbS2.bDrive 		AND bDirect ;
+bDrive2s02M1Rev := fbS2.bDriveReverse 	AND bReverse;
+bDrive2s03M1    := fbS3.bDrive 		AND bDirect ;
+bDrive2s03M1Rev := fbS3.bDriveReverse 	AND bReverse;
+bDrive2s04M1    := fbS4.bDrive 		AND bDirect ;
+bDrive2s04M1Rev := fbS4.bDriveReverse 	AND bReverse;  
+bDrive2s05M1    := fbS5.bDrive 		AND bDirect ;
+bDrive2s05M1Rev := fbS5.bDriveRev 		AND bReverse;
+bDrive2s06M1    := fbS6.bDrive 		AND bDirect  AND bSens2s06D1;
+bDrive2s06M1Rev := fbS6.bDriveRev 		AND bReverse;  
+	  
+]]></ST>
+    </Implementation>
+    <LineIds Name="ConvLine2">
+      <LineId Id="170" Count="0" />
+      <LineId Id="342" Count="1" />
+      <LineId Id="351" Count="0" />
+      <LineId Id="171" Count="0" />
+      <LineId Id="3" Count="4" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="324" Count="0" />
+      <LineId Id="10" Count="1" />
+      <LineId Id="386" Count="2" />
+      <LineId Id="368" Count="2" />
+      <LineId Id="393" Count="5" />
+      <LineId Id="508" Count="0" />
+      <LineId Id="399" Count="0" />
+      <LineId Id="509" Count="0" />
+      <LineId Id="512" Count="0" />
+      <LineId Id="510" Count="0" />
+      <LineId Id="400" Count="8" />
+      <LineId Id="371" Count="1" />
+      <LineId Id="384" Count="1" />
+      <LineId Id="12" Count="2" />
+      <LineId Id="272" Count="0" />
+      <LineId Id="475" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="435" Count="0" />
+      <LineId Id="434" Count="0" />
+      <LineId Id="16" Count="2" />
+      <LineId Id="424" Count="1" />
+      <LineId Id="436" Count="0" />
+      <LineId Id="426" Count="1" />
+      <LineId Id="433" Count="0" />
+      <LineId Id="19" Count="2" />
+      <LineId Id="273" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="474" Count="0" />
+      <LineId Id="476" Count="0" />
+      <LineId Id="482" Count="0" />
+      <LineId Id="448" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="477" Count="3" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="497" Count="0" />
+      <LineId Id="481" Count="0" />
+      <LineId Id="26" Count="2" />
+      <LineId Id="274" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="507" Count="0" />
+      <LineId Id="506" Count="0" />
+      <LineId Id="505" Count="0" />
+      <LineId Id="30" Count="1" />
+      <LineId Id="487" Count="2" />
+      <LineId Id="32" Count="4" />
+      <LineId Id="122" Count="0" />
+      <LineId Id="37" Count="15" />
+      <LineId Id="123" Count="0" />
+      <LineId Id="53" Count="5" />
+      <LineId Id="275" Count="0" />
+      <LineId Id="59" Count="2" />
+      <LineId Id="218" Count="1" />
+      <LineId Id="222" Count="1" />
+      <LineId Id="220" Count="1" />
+      <LineId Id="62" Count="13" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

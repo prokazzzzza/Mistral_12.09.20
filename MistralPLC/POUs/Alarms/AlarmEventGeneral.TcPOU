@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="AlarmEventGeneral" Id="{c757cdde-aeae-4cab-a13b-2503f587780b}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM AlarmEventGeneral
+VAR
+	fbEventlogger					:FB_TcEventLogger;
+	fbAlarm							:FB_TcAlarm;
+	fbAlarm1						:FB_TcAlarm;
+	fbMessage						:FB_TcMessage;
+	bMessage						:BOOL;
+	bIsInitalized					:BOOL;
+	bClearAlarm						:BOOL;
+	bConfirmAlarm					:BOOL;
+
+//Нет готовности БП
+	fbNotReadyPower24v				:FB_TcAlarm;
+//УЗИП	
+	fbAlarm1QF						:FB_TcAlarm;
+	fbAlarm2QF						:FB_TcAlarm;
+
+	fbAlarmSF3						:FB_TcAlarm;
+	fbAlarmSF3_						:FB_TcAlarm;
+//Аварии ввода	
+	fbAlarmK2						:FB_TcAlarm;
+	fbAlarmK2_						:FB_TcAlarm;
+//Реле безопасности		
+	fbAlarm1AS1						:FB_TcAlarm;
+	fbAlarm2AS1						:FB_TcAlarm;
+	fbAlarm3AS1						:FB_TcAlarm;
+	fbAlarm4AS1						:FB_TcAlarm;
+//Питание приводов	
+	fbAlarm1QF1						:FB_TcAlarm;
+	fbAlarm2QF1						:FB_TcAlarm;
+	fbAlarm3QF1						:FB_TcAlarm;
+	fbAlarm4QF1						:FB_TcAlarm;
+//Превышение тока или напряжения	
+	fbAlarm1P_I						:FB_TcAlarm;
+	fbAlarm1P_U						:FB_TcAlarm;
+//-----------------------------------------------------------------------------------------//	
+ 	fbButtAlarmResetGeneral_RTRIG	:R_TRIG;
+ 	fbbButtAlarmReset1_RTRIG		:R_TRIG;
+
+//Нет готовности БП
+	fbExecNotReadyPower24v			:FB_AlarmEvent;
+//УЗИП	
+	fbExecAlarm1QF					:FB_AlarmEvent;
+	fbExecAlarm2QF					:FB_AlarmEvent;
+	
+	fbExecAlarmSF3					:FB_AlarmEvent;
+	fbExecAlarmSF3_					:FB_AlarmEvent;
+//Аварии ввода	
+	fbExecAlarmK2					:FB_AlarmEvent;
+	fbExecAlarmK2_					:FB_AlarmEvent;
+//Реле безопасности	
+	fbExecAlarm1AS1					:FB_AlarmEvent;
+	fbExecAlarm2AS1					:FB_AlarmEvent;
+	fbExecAlarm3AS1					:FB_AlarmEvent;
+	fbExecAlarm4AS1					:FB_AlarmEvent;
+//Питание приводов	
+	fbExecAlarm1QF1					:FB_AlarmEvent;
+	fbExecAlarm2QF1					:FB_AlarmEvent;
+	fbExecAlarm3QF1					:FB_AlarmEvent;
+	fbExecAlarm4QF1					:FB_AlarmEvent;
+//Превышение тока или напряжения	
+	fbExecAlarm1P_I					:FB_AlarmEvent;
+	fbExecAlarm1P_U					:FB_AlarmEvent;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[Initialization();
+
+fbButtAlarmResetGeneral_RTRIG(CLK := bButtAlarmResetGeneral);
+
+fbExecNotReadyPower24v(bAlarmEvent :=bNotReadyPower24v, bButtAlarmReset:=fbButtAlarmResetGeneral_RTRIG.Q, fbAlarm:=fbNotReadyPower24v);
+
+fbExecAlarm1QF(bAlarmEvent :=bAlarm1QF, bButtAlarmReset:=fbButtAlarmResetGeneral_RTRIG.Q, fbAlarm:=fbAlarm1QF);
+fbExecAlarm2QF(bAlarmEvent :=bAlarm2QF, bButtAlarmReset:=fbButtAlarmResetGeneral_RTRIG.Q, fbAlarm:=fbAlarm2QF);
+
+fbExecAlarmSF3(bAlarmEvent :=bAlarmSF3, bButtAlarmReset:=fbButtAlarmResetGeneral_RTRIG.Q, fbAlarm:=fbAlarmSF3);
+fbExecAlarmSF3_(bAlarmEvent :=bAlarmSF3_, bButtAlarmReset:=fbButtAlarmResetGeneral_RTRIG.Q, fbAlarm:=fbAlarmSF3_);
+
+fbExecAlarmK2(bAlarmEvent :=bAlarmK2, bButtAlarmReset:=fbButtAlarmResetGeneral_RTRIG.Q, fbAlarm:=fbAlarmK2);
+fbExecAlarmK2_(bAlarmEvent :=bAlarmK2_, bButtAlarmReset:=fbButtAlarmResetGeneral_RTRIG.Q, fbAlarm:=fbAlarmK2_);
+
+fbExecAlarm1AS1(bAlarmEvent :=bAlarm1AS1, bButtAlarmReset:=fbButtAlarmResetGeneral_RTRIG.Q, fbAlarm:=fbAlarm1AS1);
+fbExecAlarm2AS1(bAlarmEvent :=bAlarm2AS1, bButtAlarmReset:=fbButtAlarmResetGeneral_RTRIG.Q, fbAlarm:=fbAlarm2AS1);
+fbExecAlarm3AS1(bAlarmEvent :=bAlarm3AS1, bButtAlarmReset:=fbButtAlarmResetGeneral_RTRIG.Q, fbAlarm:=fbAlarm3AS1);
+fbExecAlarm4AS1(bAlarmEvent :=bAlarm4AS1, bButtAlarmReset:=fbButtAlarmResetGeneral_RTRIG.Q, fbAlarm:=fbAlarm4AS1);
+
+fbExecAlarm1QF1(bAlarmEvent :=bAlarm1QF1, bButtAlarmReset:=fbButtAlarmResetGeneral_RTRIG.Q, fbAlarm:=fbAlarm1QF1);
+fbExecAlarm2QF1(bAlarmEvent :=bAlarm2QF1, bButtAlarmReset:=fbButtAlarmResetGeneral_RTRIG.Q, fbAlarm:=fbAlarm2QF1);
+fbExecAlarm3QF1(bAlarmEvent :=bAlarm3QF1, bButtAlarmReset:=fbButtAlarmResetGeneral_RTRIG.Q, fbAlarm:=fbAlarm3QF1);
+fbExecAlarm4QF1(bAlarmEvent :=bAlarm4QF1, bButtAlarmReset:=fbButtAlarmResetGeneral_RTRIG.Q, fbAlarm:=fbAlarm4QF1);
+
+fbExecAlarm1P_I(bAlarmEvent :=bAlarm1P_I, bButtAlarmReset:=fbButtAlarmResetGeneral_RTRIG.Q, fbAlarm:=fbAlarm1P_I);
+fbExecAlarm1P_U(bAlarmEvent :=bAlarm1P_U, bButtAlarmReset:=fbButtAlarmResetGeneral_RTRIG.Q, fbAlarm:=fbAlarm1P_U);]]></ST>
+    </Implementation>
+    <Action Name="Initialization" Id="{922c737b-ae3c-4dfb-9b46-b10c9c81a472}">
+      <Implementation>
+        <ST><![CDATA[IF NOT bIsInitalized THEN
+	bIsInitalized := TRUE;
+
+	fbNotReadyPower24v.CreateEx(TC_Events.AlarmGeneral.NotReadyPower24v, TRUE, 0);
+	
+	fbAlarm1QF.CreateEx(TC_Events.AlarmGeneral.Alarm1QF, TRUE, 0);
+	fbAlarm2QF.CreateEx(TC_Events.AlarmGeneral.Alarm2QF, TRUE, 0);
+	
+	fbAlarmSF3.CreateEx(TC_Events.AlarmGeneral.AlarmSF3, TRUE, 0);
+	fbAlarmSF3_.CreateEx(TC_Events.AlarmGeneral.AlarmSF3_, TRUE, 0);
+	
+	fbAlarmK2.CreateEx(TC_Events.AlarmGeneral.AlarmK2, TRUE, 0);
+	fbAlarmK2_.CreateEx(TC_Events.AlarmGeneral.AlarmK2_, TRUE, 0);
+	
+	fbAlarm1AS1.CreateEx(TC_Events.AlarmGeneral.Alarm1AS1, TRUE, 0);
+	fbAlarm2AS1.CreateEx(TC_Events.AlarmGeneral.Alarm2AS1, TRUE, 0);
+	fbAlarm3AS1.CreateEx(TC_Events.AlarmGeneral.Alarm3AS1, TRUE, 0);
+	fbAlarm4AS1.CreateEx(TC_Events.AlarmGeneral.Alarm4AS1, TRUE, 0);
+	
+	fbAlarm1QF1.CreateEx(TC_Events.AlarmGeneral.Alarm1QF1, TRUE, 0);
+	fbAlarm2QF1.CreateEx(TC_Events.AlarmGeneral.Alarm2QF1, TRUE, 0);
+	fbAlarm3QF1.CreateEx(TC_Events.AlarmGeneral.Alarm3QF1, TRUE, 0);
+	fbAlarm4QF1.CreateEx(TC_Events.AlarmGeneral.Alarm4QF1, TRUE, 0);
+	
+	fbAlarm1P_I	.CreateEx(TC_Events.AlarmGeneral.Alarm1P_I, TRUE, 0);
+	fbAlarm1P_U	.CreateEx(TC_Events.AlarmGeneral.Alarm1P_U, TRUE, 0);
+	
+END_IF]]></ST>
+      </Implementation>
+    </Action>
+    <LineIds Name="AlarmEventGeneral">
+      <LineId Id="6" Count="1" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="151" Count="1" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="71" Count="0" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="79" Count="2" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="82" Count="0" />
+      <LineId Id="84" Count="2" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="87" Count="0" />
+      <LineId Id="89" Count="0" />
+    </LineIds>
+    <LineIds Name="AlarmEventGeneral.Initialization">
+      <LineId Id="2" Count="0" />
+      <LineId Id="1" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="4" Count="0" />
+      <LineId Id="7" Count="19" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="3" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

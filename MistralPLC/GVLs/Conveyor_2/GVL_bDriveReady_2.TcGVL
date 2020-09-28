@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+  <GVL Name="GVL_bDriveReady_2" Id="{b9e84921-1b3f-441d-943d-3504fd95b9d6}">
+    <Declaration><![CDATA[VAR_GLOBAL
+// Готовность двигателей
+
+bDriveReady2s01M1	AT%I* :BOOL;	// Конороль готовности MoviMot конвейер 2 секция 1
+
+bDriveReady2s02M1	AT%I* :BOOL;	// Конороль готовности MoviMot конвейер 2 секция 2
+
+bDriveReady2s03M1	AT%I* :BOOL;	// Конороль готовности MoviMot конвейер 2 секция 3
+
+bDriveReady2s04M1	AT%I* :BOOL;	// Конороль готовности MoviSwitch конвейер 2 секция 4
+
+bDriveReady2s05M1	AT%I* :BOOL;	// Конороль готовности MoviSwitch конвейер 2 секция 5
+
+bDriveReady2s06M1	AT%I* :BOOL;	// Конороль готовности MoviSwitch конвейер 2 секция 6
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

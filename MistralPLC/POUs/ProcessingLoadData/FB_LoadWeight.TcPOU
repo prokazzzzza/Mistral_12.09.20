@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="FB_LoadWeight" Id="{85719c14-b34b-437b-99eb-10e6232a4f30}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_LoadWeight
+VAR_INPUT
+	stLoadIn			:ST_LoadData;
+	bEnable				:BOOL;
+	iConvStatus			:BYTE;
+	bAutomat			:BOOL;
+	
+	rInWeight			:DINT;;
+	bMove				:BOOL;
+	bReadWeight     	:BOOL;
+	
+	bResetCTUWeight		:BOOL;	//Очистка счетчика невзвешиваний	
+	bSetValWeight		:WORD;	//Заданное значение разрешенных ошибок
+END_VAR
+VAR_OUTPUT
+	bEnableReadyData	:BOOL;
+	bRequestWeight		:BOOL;
+	bCountNoReadWeight	:WORD;		//Кол-во несчитываний
+	bOverflowWeight		:BOOL;		//Переполнение счетчика несчитываний весов
+END_VAR
+VAR
+	fbPulsRequest		:R_TRIG;
+	bStartRequest		:BOOL;
+	fbPulsReadWeight	:R_TRIG;
+	fbDelayWeight		:TON;
+	fbStartMove			:R_TRIG;
+	fbFinMove			:F_TRIG;
+	bReadySt			:BOOL;
+	bStartMove			:BOOL;
+	bEndMove			:BOOL;
+	sInWeight			:STRING;
+	
+	WaitingWeight		:TON;
+	bNoReadWeight		:BOOL;		//Несчитывание
+	bWriteWeightGood	:BOOL;
+	fbPulsNoreadWeight 	:R_TRIG;
+	CTU 				:CTU;		//Счетчик
+END_VAR
+
+VAR_IN_OUT
+	stLoadMove      	:ST_LoadData;
+	stLoad				:ST_LoadData;
+//	bReadWeight			:BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbStartMove(CLK:=bMove);
+bStartMove S=fbStartMove.Q;
+IF bStartMove THEN 
+	stLoadMove := stLoadIn;
+	IF stLoadMove.sID=stLoadIn.sID  AND stLoadMove.sWeight=stLoadIn.sWeight  THEN
+		bStartMove:=FALSE;
+	END_IF
+END_IF
+
+fbFinMove(CLK:=bMove);
+bEndMove S= fbFinMove.Q;
+IF bEndMove THEN 
+	stLoad := stLoadMove;
+	IF stLoadMove.sID=stLoad.sID  AND stLoadMove.sWeight=stLoad.sWeight  THEN
+		bEndMove:=FALSE;
+	END_IF
+END_IF
+//bReadySt := stLoad.sID = stLoadIn.sID  AND stLoad.sWeight = stLoadIn.sWeight;
+
+bStartRequest:= bEnable AND bAutomat AND (iConvStatus=2 OR iConvStatus=3) AND NOT bEndMove;
+
+bEnableReadyData 	R= NOT bStartRequest;
+bRequestWeight 		R= NOT bStartRequest;
+bNoReadWeight		R= NOT bStartRequest;
+
+fbPulsRequest(CLK:=bStartRequest);
+IF fbPulsRequest.Q THEN
+	bRequestWeight:=TRUE;
+END_IF
+
+WaitingWeight(IN:= bRequestWeight, PT:=T#2S);
+bNoReadWeight S= WaitingWeight.Q ;
+
+fbPulsNoreadWeight(CLK:=bNoReadWeight);
+
+CTU(CU:=fbPulsNoreadWeight.Q, RESET:=bResetCTUWeight, PV:=bSetValWeight);
+bCountNoReadWeight:=CTU.CV;
+
+fbDelayWeight(IN:=bRequestWeight(*bReadWeight*), PT:=T#0.3S);
+
+sInWeight:= DINT_TO_STRING(rInWeight);
+IF bRequestWeight(*bReadWeight  AND bReadySt*)AND NOT (bCountNoReadWeight=bSetValWeight) THEN
+	stLoad.sWeight:= sInWeight;
+	
+	IF stLoad.sWeight<>'' OR fbDelayWeight.Q THEN	
+		bWriteWeightGood	:=TRUE;	
+		bRequestWeight		:=FALSE;
+	END_IF	
+END_IF
+
+bEnableReadyData S= bWriteWeightGood OR bNoReadWeight;
+
+IF iConvStatus=0 THEN
+	stLoad.sID:= '';
+	stLoad.sWeight:= '';
+END_IF
+
+IF bCountNoReadWeight>=bSetValWeight THEN bOverflowWeight:=TRUE;
+	ELSE bOverflowWeight:=FALSE;
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_LoadWeight">
+      <LineId Id="89" Count="0" />
+      <LineId Id="97" Count="0" />
+      <LineId Id="92" Count="1" />
+      <LineId Id="98" Count="2" />
+      <LineId Id="90" Count="0" />
+      <LineId Id="3" Count="1" />
+      <LineId Id="104" Count="0" />
+      <LineId Id="5" Count="1" />
+      <LineId Id="106" Count="1" />
+      <LineId Id="105" Count="0" />
+      <LineId Id="7" Count="1" />
+      <LineId Id="10" Count="4" />
+      <LineId Id="155" Count="0" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="15" Count="3" />
+      <LineId Id="156" Count="0" />
+      <LineId Id="20" Count="1" />
+      <LineId Id="159" Count="0" />
+      <LineId Id="158" Count="0" />
+      <LineId Id="162" Count="0" />
+      <LineId Id="161" Count="0" />
+      <LineId Id="160" Count="0" />
+      <LineId Id="157" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="111" Count="0" />
+      <LineId Id="23" Count="8" />
+      <LineId Id="164" Count="1" />
+      <LineId Id="32" Count="3" />
+      <LineId Id="2" Count="0" />
+      <LineId Id="169" Count="2" />
+      <LineId Id="168" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

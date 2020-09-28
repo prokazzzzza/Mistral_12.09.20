@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="FB_AlarmEvent" Id="{e697f7dc-bc41-4499-8580-166f28536191}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_AlarmEvent
+VAR_INPUT
+	bAlarmEvent		:BOOL;
+	bButtAlarmReset	:BOOL;
+END_VAR
+VAR_IN_OUT
+	fbAlarm		  :FB_TcAlarm;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF bAlarmEvent THEN	
+	fbAlarm.Raise(0);
+END_IF
+IF bButtAlarmReset THEN	
+	fbAlarm.Clear(0, TRUE);
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_AlarmEvent">
+      <LineId Id="4" Count="4" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

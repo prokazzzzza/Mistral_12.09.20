@@ -1,0 +1,495 @@
+<?xml version="1.0"?>
+<TcEventSources Version="2">
+	<Source>
+		<GUID>{26C83ADB-5BAF-49B0-8074-107DAF872DA0}</GUID>
+		<Name LcId="1033">Аварии конвейер 3</Name>
+		<Event>
+			<Id>1</Id>
+			<Message LcId="1033">Авария готовности конвейера 3QF2_3QF7</Message>
+		</Event>
+		<Event>
+			<Id>2</Id>
+			<Message LcId="1033">Авария готовности конвейера 3QF8</Message>
+		</Event>
+		<Event>
+			<Id>3</Id>
+			<Message LcId="1033">Авария готовности конвейера 3KM2</Message>
+		</Event>
+		<Event>
+			<Id>4</Id>
+			<Message LcId="1033">Авария готовности конвейера 3KM3</Message>
+		</Event>
+		<Event>
+			<Id>5</Id>
+			<Message LcId="1033">Авария готовности конвейера 3KM4</Message>
+		</Event>
+		<Event>
+			<Id>6</Id>
+			<Message LcId="1033">Авария готовности конвейера 3KM5</Message>
+		</Event>
+		<Event>
+			<Id>7</Id>
+			<Message LcId="1033">Авария готовности конвейера 3KM6</Message>
+		</Event>
+		<Event>
+			<Id>8</Id>
+			<Message LcId="1033">Авария готовности конвейера 3KM7</Message>
+		</Event>
+		<Event>
+			<Id>9</Id>
+			<Message LcId="1033">Срабатывание грибка b3_S1_SB0</Message>
+		</Event>
+		<Event>
+			<Id>10</Id>
+			<Message LcId="1033">Срабатывание грибка b3_S6_SB0</Message>
+		</Event>
+		<Event>
+			<Id>11</Id>
+			<Message LcId="1033">Нет готовности двигателя 3s01M1</Message>
+		</Event>
+		<Event>
+			<Id>12</Id>
+			<Message LcId="1033">Нет готовности двигателя 3s02M1</Message>
+		</Event>
+		<Event>
+			<Id>13</Id>
+			<Message LcId="1033">Нет готовности двигателя 3s03M1</Message>
+		</Event>
+		<Event>
+			<Id>14</Id>
+			<Message LcId="1033">Нет готовности двигателя 3s04M1</Message>
+		</Event>
+		<Event>
+			<Id>15</Id>
+			<Message LcId="1033">Нет готовности двигателя 3s05M1</Message>
+		</Event>
+		<Event>
+			<Id>16</Id>
+			<Message LcId="1033">Нет готовности двигателя 3s06M1</Message>
+		</Event>
+		<Event>
+			<Id>17</Id>
+			<Message LcId="1033">Долгое перемещение 3s01_3s02</Message>
+		</Event>
+		<Event>
+			<Id>18</Id>
+			<Message LcId="1033">Долгое перемещение 3s02_3s03</Message>
+		</Event>
+		<Event>
+			<Id>19</Id>
+			<Message LcId="1033">Долгое перемещение 3s03_3s04</Message>
+		</Event>
+		<Event>
+			<Id>20</Id>
+			<Message LcId="1033">Долгое перемещение 3s04_3s05</Message>
+		</Event>
+		<Event>
+			<Id>21</Id>
+			<Message LcId="1033">Долгое перемещение 3s05_3s06</Message>
+		</Event>
+	</Source>
+	<Source>
+		<GUID>{5E59486C-752E-44B9-BB58-EA3F9BA21588}</GUID>
+		<Name LcId="1033">Аварии конвейер 4</Name>
+		<Event>
+			<Id>1</Id>
+			<Message LcId="1033">Авария готовности конвейера 4QF2_4QF7</Message>
+		</Event>
+		<Event>
+			<Id>2</Id>
+			<Message LcId="1033">Авария готовности конвейера 4QF8</Message>
+		</Event>
+		<Event>
+			<Id>3</Id>
+			<Message LcId="1033">Авария готовности конвейера 4KM2</Message>
+		</Event>
+		<Event>
+			<Id>4</Id>
+			<Message LcId="1033">Авария готовности конвейера 4KM3</Message>
+		</Event>
+		<Event>
+			<Id>5</Id>
+			<Message LcId="1033">Авария готовности конвейера 4KM4</Message>
+		</Event>
+		<Event>
+			<Id>6</Id>
+			<Message LcId="1033">Авария готовности конвейера 4KM5</Message>
+		</Event>
+		<Event>
+			<Id>7</Id>
+			<Message LcId="1033">Авария готовности конвейера 4KM6</Message>
+		</Event>
+		<Event>
+			<Id>8</Id>
+			<Message LcId="1033">Авария готовности конвейера 4KM7</Message>
+		</Event>
+		<Event>
+			<Id>9</Id>
+			<Message LcId="1033">Срабатывание грибка b4_S1_SB0</Message>
+		</Event>
+		<Event>
+			<Id>10</Id>
+			<Message LcId="1033">Срабатывание грибка b4_S6_SB0</Message>
+		</Event>
+		<Event>
+			<Id>11</Id>
+			<Message LcId="1033">Нет готовности двигателя 4s01M1</Message>
+		</Event>
+		<Event>
+			<Id>12</Id>
+			<Message LcId="1033">Нет готовности двигателя 4s02M1</Message>
+		</Event>
+		<Event>
+			<Id>13</Id>
+			<Message LcId="1033">Нет готовности двигателя 4s03M1</Message>
+		</Event>
+		<Event>
+			<Id>14</Id>
+			<Message LcId="1033">Нет готовности двигателя 4s04M1</Message>
+		</Event>
+		<Event>
+			<Id>15</Id>
+			<Message LcId="1033">Нет готовности двигателя 4s05M1</Message>
+		</Event>
+		<Event>
+			<Id>16</Id>
+			<Message LcId="1033">Нет готовности двигателя 4s06M1</Message>
+		</Event>
+		<Event>
+			<Id>17</Id>
+			<Message LcId="1033">Долгое перемещение 4s01_4s02</Message>
+		</Event>
+		<Event>
+			<Id>18</Id>
+			<Message LcId="1033">Долгое перемещение 4s02_4s03</Message>
+		</Event>
+		<Event>
+			<Id>19</Id>
+			<Message LcId="1033">Долгое перемещение 4s03_4s04</Message>
+		</Event>
+		<Event>
+			<Id>20</Id>
+			<Message LcId="1033">Долгое перемещение 4s04_4s05</Message>
+		</Event>
+		<Event>
+			<Id>21</Id>
+			<Message LcId="1033">Долгое перемещение 4s05_4s06</Message>
+		</Event>
+	</Source>
+	<Source>
+		<GUID>{08FECCBA-2D8C-4B5E-8642-3393D7DA0A99}</GUID>
+		<Name LcId="1033">Общие аварии</Name>
+		<Event>
+			<Id>1</Id>
+			<Message LcId="1033">Авария УЗИП Alarm1QF</Message>
+		</Event>
+		<Event>
+			<Id>2</Id>
+			<Message LcId="1033">Авария УЗИП Alarm2QF</Message>
+		</Event>
+		<Event>
+			<Id>3</Id>
+			<Message LcId="1033">Авария вспомогательной системы AlarmSF3</Message>
+		</Event>
+		<Event>
+			<Id>4</Id>
+			<Message LcId="1033">Авария вспомогательной системы AlarmSF3</Message>
+		</Event>
+		<Event>
+			<Id>5</Id>
+			<Message LcId="1033">Авария ввода AlarmK2</Message>
+		</Event>
+		<Event>
+			<Id>6</Id>
+			<Message LcId="1033">Авария ввода AlarmK2_</Message>
+		</Event>
+		<Event>
+			<Id>7</Id>
+			<Message LcId="1033">Авария реле безопасности Alarm1AS1</Message>
+		</Event>
+		<Event>
+			<Id>8</Id>
+			<Message LcId="1033">Авария реле безопасности Alarm2AS1</Message>
+		</Event>
+		<Event>
+			<Id>9</Id>
+			<Message LcId="1033">Авария реле безопасности Alarm3AS1</Message>
+		</Event>
+		<Event>
+			<Id>10</Id>
+			<Message LcId="1033">Авария реле безопасности Alarm4AS1</Message>
+		</Event>
+		<Event>
+			<Id>11</Id>
+			<Message LcId="1033">Авария питания привода Alarm1QF1</Message>
+		</Event>
+		<Event>
+			<Id>12</Id>
+			<Message LcId="1033">Авария питания привода Alarm2QF1</Message>
+		</Event>
+		<Event>
+			<Id>13</Id>
+			<Message LcId="1033">Авария питания привода Alarm3QF1</Message>
+		</Event>
+		<Event>
+			<Id>14</Id>
+			<Message LcId="1033">Авария питания привода Alarm4QF1</Message>
+		</Event>
+		<Event>
+			<Id>15</Id>
+			<Message LcId="1033">Авария по превышению тока Alarm1P_I</Message>
+		</Event>
+		<Event>
+			<Id>16</Id>
+			<Message LcId="1033">Авария по превышению тока Alarm1P_U</Message>
+		</Event>
+		<Event>
+			<Id>17</Id>
+			<Message LcId="1033">Нет готовности блоков питания</Message>
+		</Event>
+	</Source>
+	<Source>
+		<GUID>{15703C4B-E941-48A2-9DF1-AB3FB1589CB8}</GUID>
+		<Name LcId="1033">Аварии конвейер 2</Name>
+		<Event>
+			<Id>1</Id>
+			<Message LcId="1033">Авария готовности конвейера 2QF2_2QF7</Message>
+		</Event>
+		<Event>
+			<Id>2</Id>
+			<Message LcId="1033">Авария готовности конвейера 2QF8</Message>
+		</Event>
+		<Event>
+			<Id>3</Id>
+			<Message LcId="1033">Авария готовности конвейера 2KM2</Message>
+		</Event>
+		<Event>
+			<Id>4</Id>
+			<Message LcId="1033">Авария готовности конвейера 2KM3</Message>
+		</Event>
+		<Event>
+			<Id>5</Id>
+			<Message LcId="1033">Авария готовности конвейера 2KM4</Message>
+		</Event>
+		<Event>
+			<Id>6</Id>
+			<Message LcId="1033">Авария готовности конвейера 2KM5</Message>
+		</Event>
+		<Event>
+			<Id>7</Id>
+			<Message LcId="1033">Авария готовности конвейера 2KM6</Message>
+		</Event>
+		<Event>
+			<Id>8</Id>
+			<Message LcId="1033">Авария готовности конвейера 2KM7</Message>
+		</Event>
+		<Event>
+			<Id>9</Id>
+			<Message LcId="1033">Срабатывание грибка b2_S1_SB0</Message>
+		</Event>
+		<Event>
+			<Id>10</Id>
+			<Message LcId="1033">Срабатывание грибка b2_S6_SB0</Message>
+		</Event>
+		<Event>
+			<Id>11</Id>
+			<Message LcId="1033">Нет готовности двигателя 2s01M1</Message>
+		</Event>
+		<Event>
+			<Id>12</Id>
+			<Message LcId="1033">Нет готовности двигателя 2s02M1</Message>
+		</Event>
+		<Event>
+			<Id>13</Id>
+			<Message LcId="1033">Нет готовности двигателя 2s03M1</Message>
+		</Event>
+		<Event>
+			<Id>14</Id>
+			<Message LcId="1033">Нет готовности двигателя 2s04M1</Message>
+		</Event>
+		<Event>
+			<Id>15</Id>
+			<Message LcId="1033">Нет готовности двигателя 2s05M1</Message>
+		</Event>
+		<Event>
+			<Id>16</Id>
+			<Message LcId="1033">Нет готовности двигателя 2s06M1</Message>
+		</Event>
+		<Event>
+			<Id>17</Id>
+			<Message LcId="1033">Долгое перемещение 2s01_2s02</Message>
+		</Event>
+		<Event>
+			<Id>18</Id>
+			<Message LcId="1033">Долгое перемещение 2s02_2s03</Message>
+		</Event>
+		<Event>
+			<Id>19</Id>
+			<Message LcId="1033">Долгое перемещение 2s03_2s04</Message>
+		</Event>
+		<Event>
+			<Id>20</Id>
+			<Message LcId="1033">Долгое перемещение 2s04_2s05</Message>
+		</Event>
+		<Event>
+			<Id>21</Id>
+			<Message LcId="1033">Долгое перемещение 2s05_2s06</Message>
+		</Event>
+		<Event>
+			<Id>22</Id>
+			<Message LcId="1033">Авария срабатывания томоза, двигатель 1, конвейер 2</Message>
+		</Event>
+		<Event>
+			<Id>23</Id>
+			<Message LcId="1033">Авария срабатывания томоза, двигатель 2, конвейер 2</Message>
+		</Event>
+		<Event>
+			<Id>24</Id>
+			<Message LcId="1033">Авария срабатывания томоза, двигатель 3, конвейер 2</Message>
+		</Event>
+		<Event>
+			<Id>25</Id>
+			<Message LcId="1033">Авария срабатывания томоза, двигатель 4, конвейер 2</Message>
+		</Event>
+		<Event>
+			<Id>26</Id>
+			<Message LcId="1033">Авария срабатывания томоза, двигатель 5, конвейер 2</Message>
+		</Event>
+		<Event>
+			<Id>27</Id>
+			<Message LcId="1033">Авария срабатывания томоза, двигатель 6, конвейер 2</Message>
+		</Event>
+	</Source>
+	<Source>
+		<GUID>{76FF5AE7-8700-4269-9DEA-EE2CD1775485}</GUID>
+		<Name LcId="1033">Аварии конвейер 1</Name>
+		<Event>
+			<Id>1</Id>
+			<Message LcId="1033">Авария готовности конвейера 1QF2_1QF7</Message>
+		</Event>
+		<Event>
+			<Id>2</Id>
+			<Message LcId="1033">Авария готовности конвейера 1QF8</Message>
+		</Event>
+		<Event>
+			<Id>3</Id>
+			<Message LcId="1033">Авария готовности конвейера 1KM2</Message>
+		</Event>
+		<Event>
+			<Id>4</Id>
+			<Message LcId="1033">Авария готовности конвейера 1KM3</Message>
+		</Event>
+		<Event>
+			<Id>5</Id>
+			<Message LcId="1033">Авария готовности конвейера 1KM4</Message>
+		</Event>
+		<Event>
+			<Id>6</Id>
+			<Message LcId="1033">Авария готовности конвейера 1KM5</Message>
+		</Event>
+		<Event>
+			<Id>7</Id>
+			<Message LcId="1033">Авария готовности конвейера 1KM6</Message>
+		</Event>
+		<Event>
+			<Id>8</Id>
+			<Message LcId="1033">Авария готовности конвейера 1KM7</Message>
+		</Event>
+		<Event>
+			<Id>9</Id>
+			<Message LcId="1033">Срабатывание грибка b1_S1_SB0</Message>
+		</Event>
+		<Event>
+			<Id>10</Id>
+			<Message LcId="1033">Срабатывание грибка b1_S6_SB0</Message>
+		</Event>
+		<Event>
+			<Id>11</Id>
+			<Message LcId="1033">Нет готовности двигателя 1s01M1</Message>
+		</Event>
+		<Event>
+			<Id>12</Id>
+			<Message LcId="1033">Нет готовности двигателя 1s02M1</Message>
+		</Event>
+		<Event>
+			<Id>13</Id>
+			<Message LcId="1033">Нет готовности двигателя 1s03M1</Message>
+		</Event>
+		<Event>
+			<Id>14</Id>
+			<Message LcId="1033">Нет готовности двигателя 1s04M1</Message>
+		</Event>
+		<Event>
+			<Id>15</Id>
+			<Message LcId="1033">Нет готовности двигателя 1s05M1</Message>
+		</Event>
+		<Event>
+			<Id>16</Id>
+			<Message LcId="1033">Нет готовности двигателя 1s06M1</Message>
+		</Event>
+		<Event>
+			<Id>22</Id>
+			<Message LcId="1033">Авария срабатывания томоза, двигатель 1, конвейер 1</Message>
+		</Event>
+		<Event>
+			<Id>23</Id>
+			<Message LcId="1033">Авария срабатывания томоза, двигатель 2, конвейер 1</Message>
+		</Event>
+		<Event>
+			<Id>24</Id>
+			<Message LcId="1033">Авария срабатывания томоза, двигатель 3, конвейер 1</Message>
+		</Event>
+		<Event>
+			<Id>25</Id>
+			<Message LcId="1033">Авария срабатывания томоза, двигатель 4, конвейер 1</Message>
+		</Event>
+		<Event>
+			<Id>26</Id>
+			<Message LcId="1033">Авария срабатывания томоза, двигатель 5, конвейер 1</Message>
+		</Event>
+		<Event>
+			<Id>27</Id>
+			<Message LcId="1033">Авария срабатывания томоза, двигатель 6, конвейер 1</Message>
+		</Event>
+		<Event>
+			<Id>23</Id>
+			<Message LcId="1033">Долгое перемещение 1s01_s02_1</Message>
+		</Event>
+		<Event>
+			<Id>24</Id>
+			<Message LcId="1033">Долгое перемещение 1s02_1_s02_2</Message>
+		</Event>
+		<Event>
+			<Id>25</Id>
+			<Message LcId="1033">Долгое перемещение 1s02_2_s03_1</Message>
+		</Event>
+		<Event>
+			<Id>26</Id>
+			<Message LcId="1033">Долгое перемещение 1s02_s03</Message>
+		</Event>
+		<Event>
+			<Id>27</Id>
+			<Message LcId="1033">Долгое перемещение 1s03_1_s03_2</Message>
+		</Event>
+		<Event>
+			<Id>28</Id>
+			<Message LcId="1033">Долгое перемещение 1s03_2_s04_1</Message>
+		</Event>
+		<Event>
+			<Id>29</Id>
+			<Message LcId="1033">Долгое перемещение 1s03_s04</Message>
+		</Event>
+		<Event>
+			<Id>30</Id>
+			<Message LcId="1033">Долгое перемещение 1s04_1_s04_2</Message>
+		</Event>
+		<Event>
+			<Id>31</Id>
+			<Message LcId="1033">Долгое перемещение 1s04_2_s05</Message>
+		</Event>
+		<Event>
+			<Id>32</Id>
+			<Message LcId="1033">Долгое перемещение 1s05_1_s06</Message>
+		</Event>
+	</Source>
+</TcEventSources>

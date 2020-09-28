@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="FB_CreateMessage" Id="{4181f478-1eed-4199-a4d7-37d8337f00dd}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_CreateMessage
+VAR_INPUT
+	stLoad		:ST_LoadData;
+	bCreateMessage :BOOL;
+END_VAR
+VAR_OUTPUT
+	sMessageOut:T_MaxString;
+	
+END_VAR
+VAR
+sTemplateMessage:T_MaxString:='|MsgNam=WMS.TEGEW|TrxId=|RFIDNAM=|DzTrn=|ArtGewBru=|';
+fbPulsCreateMessage:R_TRIG;
+sTrxId:STRING;
+i :INT;
+sMessage :T_MaxString;
+iPosRFID:INT;
+iPosTime:INT;
+iPosBrutto:INT;
+	
+
+fbFileOpen:FB_FileOpen;
+END_VAR
+VAR PERSISTENT
+iCountTrxId: UINT;
+END_VAR
+VAR_IN_OUT
+	bMessageReady:BOOL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+
+
+
+fbPulsCreateMessage(CLK:=bCreateMessage);
+
+IF fbPulsCreateMessage.Q THEN
+	iCountTrxId:= iCountTrxId+1;
+	i:=1;
+END_IF
+CASE i OF
+	0:  ;
+	
+	1:
+bMessageReady:=FALSE;	
+sTrxId:= INT_TO_STRING(iCountTrxId);	
+
+sMessage:= INSERT(sTemplateMessage,	sTrxId,24);
+iPosRFID:= FIND(sMessage,'RFIDNAM=');
+sMessage:= INSERT(sMessage,	stLoad.sID,iPosRFID+7);
+iPosTime:= FIND(sMessage,'DzTrn=');
+sMessage:= INSERT(sMessage,	sSystemTime,iPosTime+5);
+iPosBrutto:= FIND(sMessage,'ArtGewBru=');
+sMessage:= INSERT(sMessage,	stLoad.sWeight,iPosBrutto+9);
+
+	i:=3;
+	
+	3:
+sMessageOut:=	sMessage;
+IF 	sMessageOut=sMessage THEN
+	bMessageReady:=TRUE;
+	i:=0;
+END_IF
+
+	
+END_CASE]]></ST>
+    </Implementation>
+    <LineIds Name="FB_CreateMessage">
+      <LineId Id="13" Count="35" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+  <GVL Name="GVL_bPerm_4" Id="{8cf2bd65-be68-40bd-8599-22900cfcb121}">
+    <Declaration><![CDATA[VAR_GLOBAL
+// Разрешение на движение
+// Прямое движение
+bPerm4s01_4s02	:BOOL;
+bPerm4s02_4s03	:BOOL;
+bPerm4s03_4s04	:BOOL;
+bPerm4s04_4s05	:BOOL;
+bPerm4s05_4s06	:BOOL;
+// Обратное движение
+bPerm4s06_4s05	:BOOL;
+bPerm4s05_4s04	:BOOL;
+bPerm4s04_4s03	:BOOL;
+bPerm4s03_4s02	:BOOL;
+bPerm4s02_4s01	:BOOL;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

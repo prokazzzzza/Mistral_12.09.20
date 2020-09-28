@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="FB_ConvPlace" Id="{d721c21e-e2b3-42a1-b85a-0fb724539931}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ConvPlace
+VAR_INPUT
+	bFirstPlace:BOOL:=FALSE;
+	bLastPlace:BOOL:=FALSE;
+	bAutomat: BOOL;
+	bStopSecPlace: BOOL;
+	bEnableMove: BOOL;
+	ConvStatusPrev: BYTE;
+	bManual: BOOL;
+	bDriveMove: BOOL;
+	bSens1: BOOL;
+	bSens2: BOOL;
+	bSens3: BOOL := TRUE;
+	bSensFork: BOOL := FALSE;
+	tBusy: TIME := TIME#10ms;
+	tFree: TIME := TIME#2s800ms;
+	tLongMove: TIME := TIME#15s0ms;
+	bReset: BOOL := FALSE;
+	bStop: BOOL;
+	bSensFreePrev: BOOL;
+	bSensFreeNext: BOOL;
+	bButtConv: BOOL;
+	bButtConvRev: BOOL;
+	bButtMove: BOOL;
+	 bDirect: BOOL;
+	bReverse: BOOL;
+END_VAR
+VAR_OUTPUT
+	bDrive: BOOL;
+	bDriveRev: BOOL;
+	ConvStatus: BYTE;
+	bDrivePrev: BOOL;
+	bLongMove: BOOL;
+	bSensFree: BOOL;
+	bReqMove: BOOL;
+	bForkFree: BOOL;
+END_VAR
+VAR
+	fbBusy1: FB_Busy1;
+	fbBusy2: FB_Busy1;
+	fbBusy3: FB_Busy1;
+	fbBusyFork: FB_Busy2;
+	fbButt: FB_ButtonToggle;
+	fbButtRev: FB_ButtonToggle;
+	bDriveManu: BOOL;
+	bResManu: BOOL;
+	bDriveManuRev: BOOL;
+	fbLongMove: TON;
+	bDriveConv: BOOL;
+	fbButtMove: R_TRIG;
+	bDriveConvRev: BOOL;
+END_VAR
+VAR_IN_OUT
+	bMove: BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+
+
+
+     (* определение заполненности конвейерного места*)
+    fbBusy1 ( bSens:= bSens1,  tFree:=  tFree ,   tBusy:= tBusy , Reset := bReset ) ;
+	fbBusy2 ( bSens:= bSens2,  tFree:=   tFree ,   tBusy:=  tBusy , Reset := bReset ) ;
+	fbBusy3 ( bSens:= bSens3,  tFree:=   tFree ,   tBusy:=  tBusy , Reset := bReset ) ;
+	fbBusyFork( bSens:= bSensFork,  tFree:=   T#10s ,   tBusy:= T#0s , Reset := bReset ) ;
+	IF  NOT fbBusy1.ConvBusy AND NOT  fbBusy2.ConvBusy AND NOT  fbBusy3.ConvBusy THEN ConvStatus := 0;
+	ELSIF fbBusy1.ConvBusy AND NOT  fbBusy2.ConvBusy THEN ConvStatus := 1;
+	ELSIF NOT  fbBusy1.ConvBusy AND   fbBusy2.ConvBusy THEN ConvStatus := 2;
+	ELSIF fbBusy1.ConvBusy AND   fbBusy2.ConvBusy THEN ConvStatus := 3;
+	END_IF
+	
+	bForkFree:= NOT fbBusyFork.ConvBusy;
+	
+	bSensFree:= bSens1 AND bSens2 AND bSens3;
+	
+	(* включение двигателя*)
+     bDrive:= NOT bStop AND (  bDriveMove OR bDriveConv  OR  bDriveManu );
+	  bDriveRev:= NOT bStop AND bDriveManuRev;
+	
+    (* включение двигателя в ручном режиме *)
+	bResManu := bReset OR NOT bManual ;
+	fbButt (bButt := bButtConv , bEnable := bManual AND NOT bDriveManuRev AND bDirect , bReset := bResManu OR NOT bDirect
+OR bDirect AND bLastPlace AND NOT bSens2)  ;
+     bDriveManu := fbButt.bOutB;
+	fbButtRev (bButt := bButtConvRev  , bEnable :=  bManual  AND NOT bDriveManu AND bReverse, bReset := bResManu OR NOT bReverse
+OR bReverse AND bFirstPlace AND NOT bSens1)  ;
+ bDriveManuRev := fbButtRev.bOutB;
+
+	(* включение перемещения*)
+
+bReqMove:= bAutomat  AND  (ConvStatusPrev = 2  OR ConvStatusPrev =3) AND ConvStatus =0 AND  NOT fbBusyFork.ConvBusy ;
+
+	IF    bEnableMove   AND  bReqMove
+	 THEN  bMove := TRUE ;
+	END_IF
+	
+	(* включение двигателей при перемещении *)
+	bDriveConv:=   NOT bStop AND bMove  AND NOT  (ConvStatus = 2 OR ConvStatus = 3)  ;
+	bDrivePrev := NOT bStop AND bMove AND NOT  (ConvStatus = 2 OR ConvStatus = 3) AND NOT (ConvStatusPrev = 0) ;
+	
+
+	
+	
+	(* выключение перемещения*)
+	IF   bMove  AND ((*ConvStatusPrev = 0*) bSensFreePrev  OR bStopSecPlace ) AND  (ConvStatus = 2 OR ConvStatus = 3)  THEN bMove := FALSE ;
+	END_IF
+	
+	(* долгое перемещение*)
+	fbLongMove(IN := NOT bStop AND bMove , PT := tLongMove);
+	 bLongMove:= fbLongMove.Q;
+	 
+	 (* включение-выключение перемещения кнопкой*)
+	 
+	fbButtMove (CLK :=bButtMove (*AND bManual*));
+	IF fbButtMove.Q AND bManual THEN IF   NOT bMove  THEN bMove := TRUE;
+         ELSIF bMove THEN  
+      bMove := FALSE;
+	END_IF
+    END_IF
+		
+		
+
+
+	 
+		
+		
+	 IF bReset THEN 
+     bMove := FALSE ; 
+	  END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_ConvPlace">
+      <LineId Id="3" Count="26" />
+      <LineId Id="183" Count="0" />
+      <LineId Id="125" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="181" Count="0" />
+      <LineId Id="126" Count="0" />
+      <LineId Id="31" Count="40" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <GVL Name="GVL_bDrive_3" Id="{82411228-2fc6-4dcc-83b6-7395684e5480}">
+    <Declaration><![CDATA[VAR_GLOBAL
+
+	bDrive3s01M1		  	AT%Q* :BOOL;	
+	bDrive3s01M1Rev	  		AT%Q* :BOOL;
+
+	bDrive3s02M1		  	AT%Q* :BOOL;	
+	bDrive3s02M1Rev	  		AT%Q* :BOOL;
+
+	bDrive3s03M1		  	AT%Q* :BOOL;	
+	bDrive3s03M1Rev	  		AT%Q* :BOOL;
+
+	bDrive3s04M1		  	AT%Q* :BOOL;	
+	bDrive3s04M1Rev	  		AT%Q* :BOOL;
+
+	bDrive3s05M1		  	AT%Q* :BOOL;	
+	bDrive3s05M1Rev	  		AT%Q* :BOOL;
+
+	bDrive3s06M1		  	AT%Q* :BOOL;	
+	bDrive3s06M1Rev	 	  	AT%Q* :BOOL;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

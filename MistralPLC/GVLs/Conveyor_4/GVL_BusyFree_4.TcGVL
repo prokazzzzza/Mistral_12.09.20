@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+  <GVL Name="GVL_BusyFree_4" Id="{fe9063f2-4af6-408a-aa58-724ce78dd7ff}">
+    <Declaration><![CDATA[VAR_GLOBAL
+(*Текущее состояние платформы (Занято/Свободно)*)
+(*Первый этаж*)
+	bPlatformBusy4s01	 	:BOOL;
+	bPlatformFree4s01 		:BOOL;
+	bPlatformBusy4s02 		:BOOL;
+	bPlatformFree4s02 		:BOOL;
+	bPlatformBusy4s03 		:BOOL;
+	bPlatformFree4s03 		:BOOL;
+	bPlatformBusy4s04 		:BOOL;
+	bPlatformFree4s04 		:BOOL;
+	bPlatformBusy4s05		:BOOL;
+	bPlatformFree4s05 		:BOOL;
+	bPlatformBusy4s06		:BOOL;
+	bPlatformFree4s06 		:BOOL;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

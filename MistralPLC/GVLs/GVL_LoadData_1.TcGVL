@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <GVL Name="GVL_LoadData_1" Id="{ed7e32b2-d745-4894-82f4-93227204d261}">
+    <Declaration><![CDATA[VAR_GLOBAL
+	
+	sScanID_1			: STRING;
+	bRequestID_1		: BOOL;
+	bReadScan_1			: BOOL;
+	sWeight_1			: STRING;
+	bRequestWeight_1	: BOOL;
+	bReadWeight_1		: BOOL;
+	
+	sScanID_2			: STRING;
+	bRequestID_2		: BOOL;
+	bReadScan_2			: BOOL;
+	sWeight_2			: STRING;
+	bRequestWeight_2	: BOOL;
+	bReadWeight_2		: BOOL;
+	
+	sScanID_3			: STRING;
+	bRequestID_3		: BOOL;
+	bReadScan_3			: BOOL;
+	sWeight_3			: STRING;
+	bRequestWeight_3	: BOOL;
+	bReadWeight_3		: BOOL;
+	
+	sScanID_4			: STRING;
+	bRequestID_4		: BOOL;
+	bReadScan_4			: BOOL;
+	sWeight_4			: STRING;
+	bRequestWeight_4	: BOOL;
+	bReadWeight_4		: BOOL;
+	
+	bOverflow_CTU_ID1		:BOOL;		//Переполнение счетчика несчитываний ID 1
+	bOverflow_CTU_Weight1	:BOOL;		//Переполнение счетчика несчитываний весов 1
+	
+	bOverflow_CTU_ID2		:BOOL;		//Переполнение счетчика несчитываний ID 2
+	bOverflow_CTU_Weight2	:BOOL;		//Переполнение счетчика несчитываний весов 2
+	
+	bOverflow_CTU_ID3		:BOOL;		//Переполнение счетчика несчитываний ID 3
+	bOverflow_CTU_Weight3	:BOOL;		//Переполнение счетчика несчитываний весов 3
+	
+	bOverflow_CTU_ID4		:BOOL;		//Переполнение счетчика несчитываний ID 4
+	bOverflow_CTU_Weight4	:BOOL;		//Переполнение счетчика несчитываний весов 4
+	
+	sMessageOut1:T_MaxString;
+	bMessageReady1:BOOL;
+	
+	sMessageOut2:T_MaxString;
+	bMessageReady2:BOOL;
+	sMessageOut3:T_MaxString;
+	bMessageReady3:BOOL;
+	sMessageOut4:T_MaxString;
+	bMessageReady4:BOOL;
+	
+END_VAR
+VAR_GLOBAL  PERSISTENT
+		stLoadS4_1		: ST_LoadData;
+		stLoadS4_5_1	: ST_LoadData;
+		stLoadS5_1		: ST_LoadData;
+		stLoadS5_6_1	: ST_LoadData;
+		stLoadS6_1		: ST_LoadData;
+		
+		stLoadS4_2		: ST_LoadData;
+		stLoadS4_5_2	: ST_LoadData;
+		stLoadS5_2		: ST_LoadData;
+		stLoadS5_6_2	: ST_LoadData;
+		stLoadS6_2		: ST_LoadData;
+		
+		stLoadS4_3		: ST_LoadData;
+		stLoadS4_5_3	: ST_LoadData;
+		stLoadS5_3		: ST_LoadData;
+		stLoadS5_6_3	: ST_LoadData;
+		stLoadS6_3		: ST_LoadData;
+		
+		
+		stLoadS4_4		: ST_LoadData;
+		stLoadS4_5_4	: ST_LoadData;
+		stLoadS5_4		: ST_LoadData;
+		stLoadS5_6_4	: ST_LoadData;
+		stLoadS6_4		: ST_LoadData;
+		
+			
+		
+		
+END_VAR
+]]></Declaration>
+  </GVL>
+</TcPlcObject>

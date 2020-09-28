@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="TCP_IP" Id="{877baaa6-8d62-43cc-85ed-e543de687a66}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM TCP_IP
+VAR		 
+	sSrvNetID	:T_AmsNetID := '';						/// TwinCAT TCP/IP server network address
+	sLocalHost	:T_IPv4Addr := '10.45.19.80';			/// Own (server) IP address! 
+	 
+	nLocalPort1	:UDINT := 2001;							/// Own (server 1) port number!	
+	nLocalPort2	:UDINT := 2002;							/// Own (server 2) port number!  
+	nLocalPort3	:UDINT := 2003;							/// Own (server 3) port number!	 
+	nLocalPort4	:UDINT := 2004;							/// Own (server 4) port number!
+	 
+	bEnable1	:BOOL  := TRUE;							/// TRUE => enable server 1(connection) instance, FALSE => disable
+	bEnable2	:BOOL  := TRUE;							/// TRUE => enable server 2(connection) instance, FALSE => disable
+	bEnable3	:BOOL  := TRUE;							/// TRUE => enable server 3(connection) instance, FALSE => disable
+	bEnable4	:BOOL  := TRUE;							/// TRUE => enable server 4(connection) instance, FALSE => disable
+	bEnable5	:BOOL  := TRUE;							/// TRUE => enable server  (connection) instance, FALSE => disable
+	
+	bLog		:BOOL  := TRUE;							/// TRUE => Enable error/message log, FALSE => Disable 
+	 
+	fbServer1	:FB_Server := (sPrefix := 'SERVER1::');	/// Application (connection) instance 1
+	fbServer2	:FB_Server := (sPrefix := 'SERVER2::');	/// Application (connection) instance 2
+	fbServer3	:FB_Server := (sPrefix := 'SERVER3::');	/// Application (connection) instance 3
+	fbServer4	:FB_Server := (sPrefix := 'SERVER4::');	/// Application (connection) instance 4
+	 
+	hServer1	:T_HSERVER;								/// Server connection handle 1	
+	hServer2	:T_HSERVER;								/// Server connection handle 2	
+	hServer3	:T_HSERVER;								/// Server connection handle 3
+	hServer4	:T_HSERVER; 							/// Server connection handle 4
+
+	fbCloseAll	:FB_SocketCloseAll;
+	bInitialize	:BOOL := TRUE;
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF bInitialize THEN
+	bInitialize := FALSE;
+
+	(* Initialize server handle once *)
+	F_CreateServerHnd( 	sSrvNetID 	:= sSrvNetID, 
+						sLocalHost 	:= sLocalHost, 
+						nLocalPort	:= nLocalPort1,
+						nMode 		:= SEL( bLog, 0, CONNECT_MODE_ENABLEDBG),	(* Enable/disable debug messages? *)
+						bEnable 	:= FALSE,									(* TRUE = leave listener socket open, FALSE = close listener socket after last connection ist closed too *)
+						hServer 	:= hServer1 );
+						
+	F_CreateServerHnd( 	sSrvNetID 	:= sSrvNetID, 
+						sLocalHost 	:= sLocalHost, 
+						nLocalPort	:= nLocalPort2,
+						nMode 		:= SEL( bLog, 0, CONNECT_MODE_ENABLEDBG),	(* Enable/disable debug messages? *)
+						bEnable 	:= FALSE,									(* TRUE = leave listener socket open, FALSE = close listener socket after last connection ist closed too *)
+						hServer 	:= hServer2 );					
+						
+	F_CreateServerHnd( 	sSrvNetID 	:= sSrvNetID, 
+						sLocalHost 	:= sLocalHost, 
+						nLocalPort	:= nLocalPort3,
+						nMode 		:= SEL( bLog, 0, CONNECT_MODE_ENABLEDBG),	(* Enable/disable debug messages? *)
+						bEnable 	:= FALSE,									(* TRUE = leave listener socket open, FALSE = close listener socket after last connection ist closed too *)
+						hServer 	:= hServer3 );					
+						
+	F_CreateServerHnd( 	sSrvNetID 	:= sSrvNetID, 
+						sLocalHost 	:= sLocalHost, 
+						nLocalPort	:= nLocalPort4,
+						nMode 		:= SEL( bLog, 0, CONNECT_MODE_ENABLEDBG),	(* Enable/disable debug messages? *)
+						bEnable 	:= FALSE,									(* TRUE = leave listener socket open, FALSE = close listener socket after last connection ist closed too *)
+						hServer 	:= hServer4 );										
+END_IF
+
+fbServer1( hServer := hServer1, sSrvNetID := sSrvNetID, bEnable := bEnable1, bLog := bLog, 
+  	bReadScan:=bReadScan_1,sScanID:=sScanID_1 );
+fbServer2( hServer := hServer2, sSrvNetID := sSrvNetID, bEnable := bEnable2, bLog := bLog, 
+  	bReadScan:=bReadScan_2,sScanID:=sScanID_2 );
+fbServer3( hServer := hServer3, sSrvNetID := sSrvNetID, bEnable := bEnable3, bLog := bLog, 
+	bReadScan:=bReadScan_3,sScanID:=sScanID_3 );
+fbServer4( hServer := hServer4, sSrvNetID := sSrvNetID, bEnable := bEnable4, bLog := bLog, 
+	bReadScan:=bReadScan_4,sScanID:=sScanID_4 );
+
+b_1S4_2A2 := bRequestID_1;
+b_2S4_2A2 := bRequestID_2;
+b_3S4_2A2 := bRequestID_3;
+b_4S4_2A2 := bRequestID_4;]]></ST>
+    </Implementation>
+    <LineIds Name="TCP_IP">
+      <LineId Id="3" Count="44" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <GVL Name="GVL_bDriveReady_1" Id="{9a601fe0-2294-4ce4-89fd-03faa4276da3}">
+    <Declaration><![CDATA[VAR_GLOBAL
+// Готовность двигателей
+
+bDriveReady1s01M1	AT%I* :BOOL;	// Конороль готовности конвейер 1 секция 1
+
+bDriveReady1s02M1	AT%I* :BOOL;	// Конороль готовности конвейер 1 секция 2
+
+bDriveReady1s03M1	AT%I* :BOOL;	// Конороль готовности конвейер 1 секция 3
+
+bDriveReady1s04M1	AT%I* :BOOL;	// Конороль готовности конвейер 1 секция 4
+
+bDriveReady1s05M1	AT%I* :BOOL;	// Конороль готовности конвейер 1 секция 5
+
+bDriveReady1s06M1	AT%I* :BOOL;	// Конороль готовности конвейер 1 секция 6
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

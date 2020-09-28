@@ -1,0 +1,303 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="Alarm_conv_1" Id="{ab1c3445-0c43-42d9-acc8-4abe45be2d72}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM Alarm_conv_1
+VAR
+timer1 : TON;
+timer2 : TON;
+timer3 : TON;
+timer4 : TON;
+timer5 : TON;
+timer6 : TON;
+
+bAlarm_b1_S1_SB0_blink	:BOOL;
+bAlarm_b1_S6_SB0_blink	:BOOL;
+
+Blinking				:BOOL :=TRUE;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//Нет готовности конвейер 1
+	bAlarm1QF2_1QF7 S=NOT b_1QF2_1QF7 	AND bPermAlarm1;
+	bAlarm1QF8 		S=NOT b_1QF8 		AND bPermAlarm1;
+//	bAlarm1KM2 		S=NOT b_1KM2 		AND bPermAlarm1;
+//	bAlarm1KM3 		S=NOT b_1KM3 		AND bPermAlarm1;
+//	bAlarm1KM4 		S=NOT b_1KM4 		AND bPermAlarm1;
+//	bAlarm1KM5 		S=NOT b_1KM5 		AND bPermAlarm1;
+//	bAlarm1KM6 		S=NOT b_1KM6 		AND bPermAlarm1;
+//	bAlarm1KM7 		S=NOT b_1KM7 		AND bPermAlarm1;
+
+//Грибки	
+	bAlarm_b1_S1_SB0 S=NOT   b1_S1_SB0 	AND bPermAlarm1;
+	bAlarm_b1_S6_SB0 S=NOT   b1_S6_SB0 	AND bPermAlarm1;
+
+// Индикация на грибках
+	b1S1_SB0 := NOT b1_S1_SB0 AND blink.OUT;
+	b1S6_SB0 := NOT b1_S6_SB0 AND blink.OUT;
+		
+	blink(ENABLE:=Blinking,TIMELOW:=T#500MS,TIMEHIGH:=T#500MS);
+	bAlarm_b1_S1_SB0_blink := blink.OUT AND bAlarm_b1_S1_SB0;
+	bAlarm_b1_S6_SB0_blink := blink.OUT AND bAlarm_b1_S6_SB0;
+
+	
+(*Авария безопасности*)
+	bAlarmSafety1 := bAlarm_b1_S1_SB0 OR bAlarm_b1_S6_SB0;
+
+(*Нет общей готовности конвейера 1*)
+	bNotReady_1 := bAlarm1QF2_1QF7 OR bAlarm1QF8 OR bAlarm1KM2 OR bAlarm1KM3 OR bAlarm1KM4 OR bAlarm1KM5 OR bAlarm1KM6 OR bAlarm1KM7;
+					
+
+IF  bNotReady1 THEN  sAlarm1:="Нет готовности 1";
+		ELSIF bAlarmSafety1 THEN  sAlarm1:="Авария безопасности 1";
+			ELSE sAlarm1:="---------";
+END_IF
+
+	bPermAlarmDrive1 := bPermAlarm1 AND NOT bAlarmSafety1;
+	
+(*(*Готовность *)
+	IF NOT bDriveReady1s01M1 AND bPermAlarmDrive1  THEN  bNotDriveReady1s01M1 := TRUE;
+	END_IF    
+	IF NOT bDriveReady1s02M1 AND bPermAlarmDrive1  THEN  bNotDriveReady1s02M1 := TRUE;
+	END_IF 
+	IF NOT bDriveReady1s03M1 AND bPermAlarmDrive1  THEN  bNotDriveReady1s03M1 := TRUE;
+	END_IF 
+	IF NOT bDriveReady1s04M1 AND bPermAlarmDrive1  THEN  bNotDriveReady1s04M1 := TRUE;
+	END_IF 
+	IF NOT bDriveReady1s05M1 AND bPermAlarmDrive1  THEN  bNotDriveReady1s05M1 := TRUE;
+	END_IF 
+	IF NOT bDriveReady1s06M1 AND bPermAlarmDrive1  THEN  bNotDriveReady1s06M1 := TRUE;
+	END_IF *)
+	
+(*Долгие перемещения Drive*)
+	IF bLongMove1s01_s02_1   THEN bLongMove_1s01_s02_1 := TRUE;
+	END_IF
+	IF bLongMove1s02_1_s02_2  THEN bLongMove_1s02_1_s02_2 := TRUE;
+	END_IF
+	IF bLongMove1s02_2_s03_1  THEN bLongMove_1s02_2_s03_1 := TRUE;
+	END_IF
+	IF bLongMove1s02_s03  THEN bLongMove_1s02_s03 := TRUE;
+	END_IF
+		IF bLongMove1s03_1_s03_2   THEN bLongMove_1s03_1_s03_2 := TRUE;
+	END_IF
+	IF bLongMove1s03_2_s04_1  THEN bLongMove_1s03_2_s04_1 := TRUE;
+	END_IF
+	IF bLongMove1s03_s04  THEN bLongMove_1s03_s04 := TRUE;
+	END_IF
+	IF bLongMove1s04_1_s04_2  THEN bLongMove_1s04_1_s04_2 := TRUE;
+	END_IF
+		IF bLongMove1s04_2_s05   THEN bLongMove_1s04_2_s05  := TRUE;
+	END_IF
+	IF bLongMove1s05_1s06  THEN bLongMove_1s05_1s06 := TRUE;	
+	END_IF
+
+(*Нет готовности*)
+	bNotReady1 := bNotDriveReady1s01M1 OR bNotDriveReady1s02M1 OR bNotDriveReady1s03M1 OR
+			  bNotDriveReady1s04M1 OR bNotDriveReady1s05M1 OR bNotDriveReady1s06M1;
+
+(*Долгое премещение*)
+	bLongMove1 := bLongMove_1s02_1_s02_2 OR bLongMove_1s02_1_s02_2  OR bLongMove_1s02_s03 OR
+	       bLongMove_1s03_1_s03_2 OR bLongMove_1s03_2_s04_1 OR bLongMove_1s03_s04 OR bLongMove_1s04_1_s04_2 OR
+			bLongMove_1s04_2_s05   OR bLongMove_1s05_1s06;
+
+(*Сброс бита аварии по кнопке с панели*)
+	bAlarmReset1 := bButtAlarmReset1;
+	
+(*Восстановление/сброс аварийных сигналов*)
+IF bReset1 OR bAlarmReset1 THEN
+	bAlarm1QF8 :=FALSE; bAlarm1QF2_1QF7 :=FALSE;
+	bAlarm1KM2 :=FALSE; bAlarm1KM3 :=FALSE; bAlarm1KM4 :=FALSE; bAlarm1KM5 :=FALSE; bAlarm1KM6 :=FALSE; bAlarm1KM7 :=FALSE;
+
+	bNotDriveReady1s01M1 := FALSE; bNotDriveReady1s02M1 := FALSE; bNotDriveReady1s03M1 := FALSE;
+	bNotDriveReady1s04M1 := FALSE; bNotDriveReady1s05M1 := FALSE; bNotDriveReady1s06M1 := FALSE;
+	
+	bLongMove_1s02_1_s02_2 := FALSE;bLongMove_1s02_1_s02_2 := FALSE; bLongMove_1s02_s03 := FALSE;
+	bLongMove_1s03_1_s03_2 := FALSE; bLongMove_1s03_2_s04_1:= FALSE; bLongMove_1s03_s04 := FALSE;
+	 bLongMove_1s04_1_s04_2:= FALSE;  bLongMove_1s04_2_s05 := FALSE;
+    bLongMove_1s05_1s06 := FALSE;
+	
+
+	b1K2_b1KM2_err := FALSE; b1K3_b1KM3_err := FALSE; b1K4_b1KM4_err := FALSE;
+	b1K5_b1KM5_err := FALSE; b1K6_b1KM6_err := FALSE; b1K7_b1KM7_err := FALSE;
+
+	bAlarm_b1_S1_SB0	:= FALSE; bAlarm_b1_S6_SB0	:= FALSE;
+END_IF
+
+(*Формирование аварии*)
+	bAlarm1 := bNotReady1 OR bLongMove1 OR bAlarmSafety1 OR bNotReady_1 OR bNotReadyGeneral OR bOverflow_CTU_Weight1 OR bOverflow_CTU_ID1;
+	bAlarm1_vis := blink.OUT AND bAlarm1;
+
+IF  bNotReady1 THEN  sAlarmLine1:="Нет готовности";
+		ELSIF bLongMove1 THEN   sAlarmLine1:="Долгое перемещение";
+			ELSE sAlarmLine1:="---------";
+END_IF
+
+IF bAlarm1 OR bStop1 THEN bRed_1S1HL1 :=TRUE; bRed_1S1_HL1 := TRUE;
+	ELSE bRed_1S1HL1 := FALSE; bRed_1S1_HL1 := FALSE;
+END_IF
+
+AlarmEvent_conv1();
+ACT1();]]></ST>
+    </Implementation>
+    <Action Name="ACT1" Id="{d97c4b18-9d9e-41f7-a45b-d0fa261d8ff9}">
+      <Implementation>
+        <ST><![CDATA[(*Контроль расцепления тормозов при включении двигателей*)	
+
+//Контроль на секции 1
+timer1(IN:=b1K2_b1KM2_bad,PT:=T#1000MS);
+
+b1K2_b1KM2_good := b1K2 AND b_1KM2;
+b1K2_b1KM2_bad := b1K2 AND NOT b_1KM2;
+
+IF b1K2_b1KM2_bad AND timer1.Q THEN b1K2_b1KM2_err := TRUE;
+END_IF
+//-------------------------------------------------------//
+//Контроль на секции 2
+timer2(IN:=b1K3_b1KM3_bad,PT:=T#1000MS);
+
+b1K3_b1KM3_good := b1K3 AND b_1KM3;
+b1K3_b1KM3_bad := b1K3 AND NOT b_1KM3;
+
+IF b1K3_b1KM3_bad AND timer2.Q THEN b1K3_b1KM3_err := TRUE;
+END_IF
+//-------------------------------------------------------//
+//Контроль на секции 3
+timer3(IN:=b1K4_b1KM4_bad,PT:=T#1000MS);
+
+b1K4_b1KM4_good := b1K4 AND b_1KM4;
+b1K4_b1KM4_bad := b1K4 AND NOT b_1KM4;
+
+IF b1K4_b1KM4_bad AND timer3.Q THEN b1K4_b1KM4_err := TRUE;
+END_IF
+//-------------------------------------------------------//
+//Контроль на секции 4
+timer4(IN:=b1K5_b1KM5_bad,PT:=T#1000MS);
+
+b1K5_b1KM5_good := b1K5 AND b_1KM5;
+b1K5_b1KM5_bad := b1K5 AND NOT b_1KM5;
+
+IF b1K5_b1KM5_bad AND timer4.Q THEN b1K5_b1KM5_err := TRUE;
+END_IF
+//-------------------------------------------------------//
+//Контроль на секции 5
+timer5(IN:=b1K6_b1KM6_bad,PT:=T#1000MS);
+
+b1K6_b1KM6_good := b1K6 AND b_1KM6;
+b1K6_b1KM6_bad := b1K6 AND NOT b_1KM6;
+
+IF b1K6_b1KM6_bad AND timer5.Q THEN b1K6_b1KM6_err := TRUE;
+END_IF
+//-------------------------------------------------------//
+//Контроль на секции 6
+timer6(IN:=b1K7_b1KM7_bad,PT:=T#1000MS);
+
+b1K7_b1KM7_good := b1K7 AND b_1KM7;
+b1K7_b1KM7_bad := b1K7 AND NOT b_1KM7;
+
+IF b1K7_b1KM7_bad AND timer6.Q THEN b1K7_b1KM7_err := TRUE;
+END_IF]]></ST>
+      </Implementation>
+    </Action>
+    <LineIds Name="Alarm_conv_1">
+      <LineId Id="57" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="23" Count="1" />
+      <LineId Id="26" Count="4" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="58" Count="2" />
+      <LineId Id="402" Count="0" />
+      <LineId Id="400" Count="0" />
+      <LineId Id="398" Count="0" />
+      <LineId Id="401" Count="0" />
+      <LineId Id="356" Count="0" />
+      <LineId Id="358" Count="0" />
+      <LineId Id="362" Count="0" />
+      <LineId Id="367" Count="0" />
+      <LineId Id="357" Count="0" />
+      <LineId Id="78" Count="2" />
+      <LineId Id="86" Count="0" />
+      <LineId Id="85" Count="0" />
+      <LineId Id="87" Count="0" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="134" Count="0" />
+      <LineId Id="136" Count="2" />
+      <LineId Id="135" Count="0" />
+      <LineId Id="140" Count="0" />
+      <LineId Id="139" Count="0" />
+      <LineId Id="301" Count="0" />
+      <LineId Id="144" Count="0" />
+      <LineId Id="147" Count="0" />
+      <LineId Id="146" Count="0" />
+      <LineId Id="149" Count="2" />
+      <LineId Id="156" Count="0" />
+      <LineId Id="158" Count="5" />
+      <LineId Id="203" Count="1" />
+      <LineId Id="206" Count="0" />
+      <LineId Id="205" Count="0" />
+      <LineId Id="207" Count="0" />
+      <LineId Id="435" Count="0" />
+      <LineId Id="209" Count="3" />
+      <LineId Id="471" Count="6" />
+      <LineId Id="470" Count="0" />
+      <LineId Id="451" Count="0" />
+      <LineId Id="478" Count="0" />
+      <LineId Id="213" Count="1" />
+      <LineId Id="263" Count="0" />
+      <LineId Id="265" Count="1" />
+      <LineId Id="264" Count="0" />
+      <LineId Id="270" Count="0" />
+      <LineId Id="269" Count="0" />
+      <LineId Id="271" Count="0" />
+      <LineId Id="479" Count="0" />
+      <LineId Id="272" Count="0" />
+      <LineId Id="277" Count="0" />
+      <LineId Id="279" Count="0" />
+      <LineId Id="278" Count="0" />
+      <LineId Id="248" Count="2" />
+      <LineId Id="293" Count="0" />
+      <LineId Id="291" Count="1" />
+      <LineId Id="251" Count="0" />
+      <LineId Id="253" Count="3" />
+      <LineId Id="482" Count="0" />
+      <LineId Id="481" Count="0" />
+      <LineId Id="480" Count="0" />
+      <LineId Id="294" Count="0" />
+      <LineId Id="354" Count="0" />
+      <LineId Id="352" Count="1" />
+      <LineId Id="295" Count="0" />
+      <LineId Id="252" Count="0" />
+      <LineId Id="260" Count="0" />
+      <LineId Id="262" Count="0" />
+      <LineId Id="273" Count="0" />
+      <LineId Id="383" Count="0" />
+      <LineId Id="275" Count="0" />
+      <LineId Id="280" Count="2" />
+      <LineId Id="274" Count="0" />
+      <LineId Id="417" Count="0" />
+      <LineId Id="287" Count="0" />
+      <LineId Id="418" Count="2" />
+      <LineId Id="286" Count="0" />
+      <LineId Id="355" Count="0" />
+    </LineIds>
+    <LineIds Name="Alarm_conv_1.ACT1">
+      <LineId Id="2" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="3" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="5" Count="1" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="1" Count="0" />
+      <LineId Id="12" Count="7" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="21" Count="7" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="30" Count="7" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="39" Count="7" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="48" Count="7" />
+      <LineId Id="47" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

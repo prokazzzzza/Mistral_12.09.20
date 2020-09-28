@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <POU Name="FB_Busy2" Id="{192239bf-b071-4671-970b-cb6c0c703943}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Busy2
+VAR_INPUT
+	bSens	 :BOOL;
+	tBusy	 :TIME;
+	tFree	 :TIME;
+	Reset	 :BOOL;
+END_VAR
+VAR_OUTPUT
+	ConvBusy :BOOL;
+END_VAR
+VAR
+	Timer1	 :TON;
+	Timer2	 :TON;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[Timer1 (IN := 	  bSens, PT := tBusy);
+IF Timer1.Q THEN ConvBusy := TRUE;
+END_IF
+Timer2 (IN := NOT bSens, PT := tFree);
+IF Timer2.Q (*OR Reset*) THEN ConvBusy := FALSE;
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_Busy2">
+      <LineId Id="3" Count="4" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

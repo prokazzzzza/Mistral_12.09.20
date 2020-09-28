@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <GVL Name="GVL_Alarm" Id="{73ccd17a-1e22-44e1-afde-d77a4a0ce1f3}">
+    <Declaration><![CDATA[VAR_GLOBAL
+
+	bNotReadyPower24v       	:BOOL;
+	bPermAlarm1					:BOOL;
+
+	bAlarm						:BOOL;
+	bAlarm1						:BOOL;
+	bAlarm1_vis					:BOOL; //Мигающая авария для визуализации конвейер 1
+	bAlarm2						:BOOL;
+	bAlarm2_vis					:BOOL; //Мигающая авария для визуализации конвейер 2
+	bAlarm3						:BOOL;
+	bAlarm3_vis					:BOOL; //Мигающая авария для визуализации конвейер 3
+	bAlarm4						:BOOL;
+	bAlarm4_vis					:BOOL; //Мигающая авария для визуализации конвейер 4
+	
+	bAlarm1QF					:BOOL;
+	bAlarm2QF					:BOOL;
+
+	bAlarmSF3					:BOOL;
+	bAlarmSF3_					:BOOL;
+
+	bAlarmK2					:BOOL;
+	bAlarmK2_					:BOOL;
+
+	bAlarm1AS1					:BOOL;
+	bAlarm2AS1					:BOOL;
+	bAlarm3AS1					:BOOL;
+	bAlarm4AS1					:BOOL;
+
+	bAlarm1QF1					:BOOL;
+	bAlarm2QF1					:BOOL;
+	bAlarm3QF1					:BOOL;
+	bAlarm4QF1					:BOOL;
+
+	bAlarm1P_I					:BOOL;
+	bAlarm1P_U					:BOOL;
+
+	bAlarm1QF2_1QF7				:BOOL;
+	bAlarm1QF8					:BOOL;
+	bAlarm1KM2					:BOOL;
+	bAlarm1KM3					:BOOL;
+	bAlarm1KM4					:BOOL;
+	bAlarm1KM5					:BOOL;
+	bAlarm1KM6					:BOOL;
+	bAlarm1KM7					:BOOL;
+
+	bAlarm2QF2_2QF7				:BOOL;	
+	bAlarm2QF8					:BOOL;
+	bAlarm2KM2					:BOOL;
+	bAlarm2KM3					:BOOL;
+	bAlarm2KM4					:BOOL;
+	bAlarm2KM5					:BOOL;
+	bAlarm2KM6					:BOOL;
+	bAlarm2KM7					:BOOL;
+
+	bAlarm3QF2_3QF7				:BOOL;
+	bAlarm3QF8					:BOOL;
+	bAlarm3KM2					:BOOL;
+	bAlarm3KM3					:BOOL;
+	bAlarm3KM4					:BOOL;
+	bAlarm3KM5					:BOOL;
+	bAlarm3KM6					:BOOL;
+	bAlarm3KM7					:BOOL;
+
+	bAlarm4QF2_4QF7				:BOOL;	
+	bAlarm4QF8					:BOOL;
+	bAlarm4KM2					:BOOL;
+	bAlarm4KM3					:BOOL;
+	bAlarm4KM4					:BOOL;
+	bAlarm4KM5					:BOOL;
+	bAlarm4KM6					:BOOL;
+	bAlarm4KM7					:BOOL;
+	
+	bAlarm_b1_S1_SB0			:BOOL;
+	bAlarm_b1_S6_SB0			:BOOL;
+	bAlarm_b2_S1_SB0			:BOOL;
+	bAlarm_b2_S6_SB0			:BOOL;
+	bAlarm_b3_S1_SB0			:BOOL;
+	bAlarm_b3_S6_SB0			:BOOL;
+	bAlarm_b4_S1_SB0			:BOOL;
+	bAlarm_b4_S6_SB0			:BOOL;
+	
+	bAlarmSafety1				:BOOL;
+	bAlarmSafety2				:BOOL;
+	bAlarmSafety3				:BOOL;
+	bAlarmSafety4				:BOOL;
+	
+	bNotReady1					:BOOL;
+	bNotReady2					:BOOL;
+	bNotReady3					:BOOL;
+	bNotReady4					:BOOL;
+	
+	bNotReady_1					:BOOL;
+	bNotReady_2					:BOOL;
+	bNotReady_3					:BOOL;
+	bNotReady_4					:BOOL;
+	
+	bLongMove1					:BOOL;
+	bLongMove2					:BOOL;
+	bLongMove3					:BOOL;
+	bLongMove4					:BOOL;
+	
+	bAlarmSF					:BOOL;
+	bAlarm_input_accident		:BOOL;
+	bAlarm_Safety_relay			:BOOL;
+	bAlarm_Drive_power			:BOOL;
+	bAlarmQF					:BOOL;
+	bAlarm_Overload_I_U			:BOOL;
+
+	bNotReadyGeneral			:BOOL;
+	bNotReadyGeneral1			:BOOL;
+	bNotReadyGeneral2			:BOOL;
+	bNotReadyGeneral3			:BOOL;
+	bNotReadyGeneral4			:BOOL;
+
+	bAlarmGeneral				:BOOL;
+	bAlarmGeneral1				:BOOL;
+	bAlarmGeneral2				:BOOL;
+	bAlarmGeneral3				:BOOL;
+	bAlarmGeneral4				:BOOL;
+	
+	bButtAlarmResetHMI			:BOOL;
+	bButtAlarmReset1 			:BOOL;
+	bButtAlarmReset2 			:BOOL;
+	bButtAlarmReset3 			:BOOL;
+	bButtAlarmReset4 			:BOOL;
+
+	bButtAlarmResetGeneral		:BOOL;	
+	bButtAlarmResetGeneral1		:BOOL;
+	bButtAlarmResetGeneral2		:BOOL;
+	bButtAlarmResetGeneral3		:BOOL;
+	bButtAlarmResetGeneral4		:BOOL;
+	
+	bAlarmResetGeneral			:BOOL;
+	bAlarmReset1				:BOOL;
+	bAlarmReset2				:BOOL;
+	bAlarmReset3				:BOOL;
+	bAlarmReset4				:BOOL;
+
+	sAlarmLineGeneral			:WSTRING;	
+	sAlarmLine1					:WSTRING;
+	sAlarmLine2					:WSTRING;
+	sAlarmLine3					:WSTRING;
+	sAlarmLine4					:WSTRING;
+
+	sAlarmGeneral				:WSTRING;
+	sAlarm1						:WSTRING;
+	sAlarm2						:WSTRING;
+	sAlarm3						:WSTRING;
+	sAlarm4						:WSTRING;
+	
+	bPermAlarmDrive1      		:BOOL;
+	bPermAlarmDrive2      		:BOOL;
+	bPermAlarmDrive3      		:BOOL;
+	bPermAlarmDrive4      		:BOOL;
+	
+	bNotDriveReady1s01M1		:BOOL;
+	bNotDriveReady1s02M1		:BOOL;
+	bNotDriveReady1s03M1		:BOOL;
+	bNotDriveReady1s04M1		:BOOL;
+	bNotDriveReady1s05M1		:BOOL;
+	bNotDriveReady1s06M1		:BOOL;
+	
+	bNotDriveReady2s01M1		:BOOL;
+	bNotDriveReady2s02M1		:BOOL;
+	bNotDriveReady2s03M1		:BOOL;
+	bNotDriveReady2s04M1		:BOOL;
+	bNotDriveReady2s05M1		:BOOL;
+	bNotDriveReady2s06M1		:BOOL;
+	
+	bNotDriveReady3s01M1		:BOOL;
+	bNotDriveReady3s02M1		:BOOL;
+	bNotDriveReady3s03M1		:BOOL;
+	bNotDriveReady3s04M1		:BOOL;
+	bNotDriveReady3s05M1		:BOOL;
+	bNotDriveReady3s06M1		:BOOL;
+
+	bNotDriveReady4s01M1		:BOOL;
+	bNotDriveReady4s02M1		:BOOL;
+	bNotDriveReady4s03M1		:BOOL;
+	bNotDriveReady4s04M1		:BOOL;
+	bNotDriveReady4s05M1		:BOOL;
+	bNotDriveReady4s06M1		:BOOL;
+	
+	b1K2_b1KM2_good 			:BOOL;
+	b1K2_b1KM2_bad				:BOOL;
+	b1K2_b1KM2_err				:BOOL;
+
+	b1K3_b1KM3_good 			:BOOL;
+	b1K3_b1KM3_bad				:BOOL;
+	b1K3_b1KM3_err				:BOOL;
+
+	b1K4_b1KM4_good 			:BOOL;
+	b1K4_b1KM4_bad				:BOOL;
+	b1K4_b1KM4_err				:BOOL;
+
+	b1K5_b1KM5_good 			:BOOL;
+	b1K5_b1KM5_bad				:BOOL;
+	b1K5_b1KM5_err				:BOOL;
+
+	b1K6_b1KM6_good 			:BOOL;
+	b1K6_b1KM6_bad				:BOOL;
+	b1K6_b1KM6_err				:BOOL;
+
+	b1K7_b1KM7_good 			:BOOL;
+	b1K7_b1KM7_bad				:BOOL;
+	b1K7_b1KM7_err				:BOOL;
+
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

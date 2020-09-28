@@ -1,0 +1,335 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <GVL Name="GVL" Id="{11fc560e-576a-4350-b862-01b160576e72}">
+    <Declaration><![CDATA[VAR_GLOBAL
+
+sSystemTime:STRING;
+
+bAutomat1		  :BOOL;
+bStartAutomat1	  :BOOL;
+bManual1		  :BOOL;
+bStop1			  :BOOL;
+bReset1			  :BOOL := FALSE;
+bDirect1		  :BOOL;
+bReverse1		  :BOOL;
+bBuffering1		  :BOOL:=TRUE;
+//-------------------------//
+bAutomat2		  :BOOL;
+bStartAutomat2	  :BOOL;
+bManual2		  :BOOL;
+bStop2			  :BOOL;
+bReset2			  :BOOL := FALSE;
+bDirect2		  :BOOL;
+bReverse2		  :BOOL;
+bBuffering2		  :BOOL:=TRUE;
+//-------------------------//
+bAutomat3		  :BOOL;
+bStartAutomat3	  :BOOL;
+bManual3		  :BOOL;
+bStop3			  :BOOL;
+bReset3			  :BOOL := FALSE;
+bDirect3		  :BOOL;
+bReverse3		  :BOOL;
+bBuffering3		  :BOOL:=TRUE;
+//-------------------------//
+bAutomat4		  :BOOL;
+bStartAutomat4	  :BOOL;
+bManual4		  :BOOL;
+bStop4			  :BOOL;
+bReset4			  :BOOL := FALSE;
+bDirect4		  :BOOL;
+bReverse4		  :BOOL;
+bBuffering4		  :BOOL:=TRUE;
+//-------------------------//
+
+bSound1			  :BOOL;
+bSound1_		  :BOOL;
+bSound2			  :BOOL;
+bSound2_		  :BOOL;
+bSound3			  :BOOL;
+bSound3_		  :BOOL;
+bSound4			  :BOOL;
+bSound4_		  :BOOL;
+
+blink			  :BLINK;
+Out1 		AT%Q* :BOOL;   //Выход на дискретный вход RFID Alien
+
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 1 (EPP2339-0021) X1^Channel 25^Output'}
+b_1S4_2A2  AT%Q*  :BOOL;   // ALR F800 приемник RFID 1 (RFID scan)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 4 (EPP2339-0021) X2^Channel 25^Output'}
+b_2S4_2A2  AT%Q*  :BOOL;   // ALR F800 приемник RFID 2 (RFID scan)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 1 (EPP2339-0021) X3^Channel 25^Output'}
+b_3S4_2A2  AT%Q*  :BOOL;   // ALR F800 приемник RFID 3 (RFID scan)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 4 (EPP2339-0021) X4^Channel 25^Output'}
+b_4S4_2A2  AT%Q*  :BOOL;   // ALR F800 приемник RFID 4 (RFID scan)
+
+RFID_ID_1 		  :STRING; // QR-code полученый с RFID 1
+RFID_ID_2 		  :STRING; // QR-code полученый с RFID 2
+RFID_ID_3 		  :STRING; // QR-code полученый с RFID 3
+RFID_ID_4 		  :STRING; // QR-code полученый с RFID 4
+
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 1 (EPP2339-0021) X1^Channel 26^Output'}
+b_1S5_2A1   AT%Q* :BOOL; // Bizerba WM-3 модуль логики весов 1
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 4 (EPP2339-0021) X2^Channel 26^Output'}
+b_2S5_2A1   AT%Q* :BOOL; // Bizerba WM-3 модуль логики весов 2
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 1 (EPP2339-0021) X3^Channel 26^Output'}
+b_3S5_2A1   AT%Q* :BOOL; // Bizerba WM-3 модуль логики весов 3
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 4 (EPP2339-0021) X4^Channel 26^Output'}
+b_4S5_2A1   AT%Q* :BOOL; // Bizerba WM-3 модуль логики весов 4
+
+{attribute 'TcLinkTo' := 'TIID^Device 2 (Profinet Controller CCAT (RT))^scale1^API^Term 18 (Input 2 word)^Subterm 21 (Input 2 word)^Inputs^Input'}
+Massa_1	 	AT%I* :REAL; // масса полученая с весов 1
+Massa_1_INT		  :INT;	 //Преобразованное значение массы 1 из REAL в INT
+Massa_1_Gramms	  :DINT; //Преобразованное значение массы 1 из Кг в Граммы
+{attribute 'TcLinkTo' := 'TIID^Device 2 (Profinet Controller CCAT (RT))^scale2^API^Term 102 (Input 2 word)^Subterm 114 (Input 2 word)^Inputs^Input'}
+Massa_2		AT%I* :REAL; // масса полученая с весов 2
+Massa_2_INT		  :INT;	 //Преобразованное значение массы 2 из REAL в INT
+Massa_2_Gramms	  :DINT; //Преобразованное значение массы 2 из Кг в Граммы
+{attribute 'TcLinkTo' := 'TIID^Device 2 (Profinet Controller CCAT (RT))^scale3^API^Term 48 (Input 2 word)^Subterm 60 (Input 2 word)^Inputs^Input'}
+Massa_3		AT%I* :REAL; // масса полученая с весов 3
+Massa_3_INT		  :INT;  //Преобразованное значение массы 3 из REAL в INT
+Massa_3_Gramms	  :DINT; //Преобразованное значение массы 3 из Кг в Граммы
+{attribute 'TcLinkTo' := 'TIID^Device 2 (Profinet Controller CCAT (RT))^scale4^API^Term 75 (Input 2 word)^Subterm 87 (Input 2 word)^Inputs^Input'}
+Massa_4		AT%I* :REAL; // масса полученая с весов 4
+Massa_4_INT		  :INT;	 //Преобразованное значение массы 4 из REAL в INT
+Massa_4_Gramms	  :DINT; //Преобразованное значение массы 4 из Кг в Граммы
+
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 2 (EL1008)^Channel 1^Input'}
+b_1QF		AT%I* :BOOL; // Состояние AB 1QF (Защита УЗИП)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 2 (EL1008)^Channel 2^Input'}
+b_2QF		AT%I* :BOOL; // Состояние AB 2QF (питание +2.ШУ)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 2 (EL1008)^Channel 3^Input'}
+b_SF3		AT%I* :BOOL; // Состояние AB SF3 (всп.системы +1.ШУ)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 2 (EL1008)^Channel 4^Input'}
+b_K2		AT%I* :BOOL; // Авария ввода -К2
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 2 (EL1008)^Channel 5^Input'}
+b_1AS1		AT%I* :BOOL; // Реле безопасности конвейера 1 1AS1
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 2 (EL1008)^Channel 6^Input'}
+b_2AS1		AT%I* :BOOL; // Реле безопасности конвейера 2 1AS2
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 2 (EL1008)^Channel 7^Input'}
+b_GP3		AT%I* :BOOL; // Состояние БП24В GP3
+
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 3 (EL1008)^Channel 1^Input'}
+b_1QF1		AT%I* :BOOL; // Состояние AB 1QF1 (питание приводов конв.1)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 3 (EL1008)^Channel 2^Input'}
+b_1KM1_1 	AT%I* :BOOL; // Состояние 1КМ1.1 (конв.1 прямое вращение)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 3 (EL1008)^Channel 3^Input'}
+b_1KM1_2 	AT%I* :BOOL; // Состояние 1КМ1.2 (конв.1 реверсивное вращение)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 3 (EL1008)^Channel 4^Input'}
+b_2QF1		AT%I* :BOOL; // Состояние AB 2QF1 (питание приводов конв.2)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 3 (EL1008)^Channel 5^Input'}
+b_2KM1_1 	AT%I* :BOOL; // Состояние 2КМ1.1 (конв.2 прямое вращение)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 3 (EL1008)^Channel 6^Input'}
+b_2KM1_2 	AT%I* :BOOL; // Состояние 2КМ1.2 (конв.2 реверсивное вращение)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 3 (EL1008)^Channel 7^Input'}
+b_1P_I		AT%I* :BOOL; // Контроль превышения тока ввода
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 3 (EL1008)^Channel 8^Input'}
+b_1P_U		AT%I* :BOOL; // Контроль превышения напряжения на вводе
+
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 4 (EL1008)^Channel 1^Input'}
+b_1QF2_1QF7 AT%I* :BOOL; // Состояние AB 1QF2,1QF3,1QF4,1QF5,1QF6,1QF7 (питание привода конвейер 1 1М1)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 4 (EL1008)^Channel 2^Input'}
+b_1QF8		AT%I* :BOOL; // Состояние AB 1QF8 (питание тормозов конвейер 1)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 4 (EL1008)^Channel 3^Input'}
+b_1KM2		AT%I* :BOOL; // Состояние 1КМ2 (питание тормоза конвейер 1 1BR1)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 4 (EL1008)^Channel 4^Input'}
+b_1KM3		AT%I* :BOOL; // Состояние 1КМ3 (питание тормоза конвейер 1 1BR2)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 4 (EL1008)^Channel 5^Input'}
+b_1KM4		AT%I* :BOOL; // Состояние 1КМ4 (питание тормоза конвейер 1 1BR3)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 4 (EL1008)^Channel 6^Input'}
+b_1KM5		AT%I* :BOOL; // Состояние 1КМ5 (питание тормоза конвейер 1 1BR4)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 4 (EL1008)^Channel 7^Input'}
+b_1KM6		AT%I* :BOOL; // Состояние 1КМ6 (питание тормоза конвейер 1 1BR5)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 4 (EL1008)^Channel 8^Input'}
+b_1KM7		AT%I* :BOOL; // Состояние 1КМ7 (питание тормоза конвейер 1 1BR6)
+
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 5 (EL1008)^Channel 1^Input'}
+b_2QF2_2QF7 AT%I* :BOOL; // Состояние AB 2QF2,2QF3,2QF4,2QF5,2QF6,2QF7 (питание привода конвейер 2 2М1)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 5 (EL1008)^Channel 2^Input'}
+b_2QF8		AT%I* :BOOL; // Состояние AB 2QF8 (питание тормозов конвейер 2)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 5 (EL1008)^Channel 3^Input'}
+b_2KM2		AT%I* :BOOL; // Состояние 2КМ2 (питание тормоза конвейер 2 2BR1)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 5 (EL1008)^Channel 4^Input'}
+b_2KM3		AT%I* :BOOL; // Состояние 2КМ3 (питание тормоза конвейер 2 2BR2)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 5 (EL1008)^Channel 5^Input'}
+b_2KM4		AT%I* :BOOL; // Состояние 2КМ4 (питание тормоза конвейер 2 2BR3)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 5 (EL1008)^Channel 6^Input'}
+b_2KM5		AT%I* :BOOL; // Состояние 2КМ5 (питание тормоза конвейер 2 2BR4)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 5 (EL1008)^Channel 7^Input'}
+b_2KM6		AT%I* :BOOL; // Состояние 2КМ6 (питание тормоза конвейер 2 2BR5)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 5 (EL1008)^Channel 8^Input'}
+b_2KM7		AT%I* :BOOL; // Состояние 2КМ7 (питание тормоза конвейер 2 2BR6)
+
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 7 (EL2008)^Channel 1^Output'}
+b_1K1_1		AT%Q* :BOOL; // Включение 1КМ1.1
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 7 (EL2008)^Channel 2^Output'}
+b_1K1_2		AT%Q* :BOOL; // Включение 1КМ1.2
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 7 (EL2008)^Channel 3^Output'}
+b_2K1_1		AT%Q* :BOOL; // Включение 2КМ1.1
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 7 (EL2008)^Channel 4^Output'}
+b_2K1_2		AT%Q* :BOOL; // Включение 2КМ1.2
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 7 (EL2008)^Channel 5^Output'}
+b1K2		AT%Q* :BOOL; // Пуск 1UZ1
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 7 (EL2008)^Channel 6^Output'}
+b1K3		AT%Q* :BOOL; // Пуск 1UZ2
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 7 (EL2008)^Channel 7^Output'}
+b1K4		AT%Q* :BOOL; // Пуск 1UZ3
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 7 (EL2008)^Channel 8^Output'}
+b1K5		AT%Q* :BOOL; // Пуск 1UZ4
+
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 8 (EL2008)^Channel 1^Output'}
+b1K6		AT%Q* :BOOL; // Пуск 1UZ5
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 8 (EL2008)^Channel 2^Output'}
+b1K7		AT%Q* :BOOL; // Пуск 1UZ6
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 8 (EL2008)^Channel 3^Output'}
+b2K2		AT%Q* :BOOL; // Пуск 2UZ1
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 8 (EL2008)^Channel 4^Output'}
+b2K3		AT%Q* :BOOL; // Пуск 2UZ2
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 8 (EL2008)^Channel 5^Output'}
+b2K4		AT%Q* :BOOL; // Пуск 2UZ3
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 8 (EL2008)^Channel 6^Output'}
+b2K5		AT%Q* :BOOL; // Пуск 2UZ4
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 8 (EL2008)^Channel 7^Output'}
+b2K6		AT%Q* :BOOL; // Пуск 2UZ5
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 8 (EL2008)^Channel 8^Output'}
+b2K7		AT%Q* :BOOL; // Пуск 2UZ6
+
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 3 (EPP2339-0021) X1^Channel 9^Input'}
+b1_S1_SB0	AT%I* :BOOL; // Кнопка аварийного останова на стойке стеллажа 1
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 1 (EPP2339-0021) X1^Channel 11^Input'}
+b1_S6_SB0	AT%I* :BOOL; // Кнопка аварийного останова 1
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 6 (EPP2339-0021) X2^Channel 9^Input'}
+b2_S1_SB0	AT%I* :BOOL; // Кнопка аварийного останова на стойке стеллажа 2
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 4 (EPP2339-0021) X2^Channel 11^Input'}
+b2_S6_SB0	AT%I* :BOOL; // Кнопка аварийного останова 2
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 3 (EPP2339-0021) X3^Channel 9^Input'}
+b3_S1_SB0	AT%I* :BOOL; // Кнопка аварийного останова на стойке стеллажа 3
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 1 (EPP2339-0021) X3^Channel 11^Input'}
+b3_S6_SB0	AT%I* :BOOL; // Кнопка аварийного останова 3
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 6 (EPP2339-0021) X4^Channel 9^Input'}
+b4_S1_SB0	AT%I* :BOOL; // Кнопка аварийного останова на стойке стеллажа 4
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 4 (EPP2339-0021) X4^Channel 11^Input'}
+b4_S6_SB0	AT%I* :BOOL; // Кнопка аварийного останова 4
+
+
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 9 (EL2008)^Channel 1^Output'}
+b1S1_SB0	AT%Q* :BOOL; // Лампа SB0 +1.S1-SB0
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 9 (EL2008)^Channel 2^Output'}
+b1S6_SB0	AT%Q* :BOOL; // Лампа SB0 +1.S6-SB0
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 9 (EL2008)^Channel 3^Output'}
+b2S1_SB0	AT%Q* :BOOL; // Лампа SB0 +2.S1-SB0
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 9 (EL2008)^Channel 4^Output'}
+b2S6_SB0	AT%Q* :BOOL; // Лампа SB0 +2.S6-SB0
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 9 (EL2008)^Channel 5^Output'}
+b1Sh_SB0	AT%Q* :BOOL; // Лампа SB0 +1ШУ-1SB0
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 9 (EL2008)^Channel 6^Output'}
+b1Sh_SB1	AT%Q* :BOOL; // Лампа Рестарт +1ШУ-1SB1
+
+//-------------------------------------------------------------------------------------//
+
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 15 (EL1008)^Channel 1^Input'}
+b_SF3_		AT%I* :BOOL; // Состояние AB SF3 (всп.системы +1.ШУ)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 15 (EL1008)^Channel 2^Input'}
+b_K2_		AT%I* :BOOL; // Авария ввода -К2
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 15 (EL1008)^Channel 3^Input'}
+b_3AS1		AT%I* :BOOL; // Реле безопасности конвейера 3 3AS1
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 15 (EL1008)^Channel 4^Input'}
+b_4AS1		AT%I* :BOOL; // Реле безопасности конвейера 4 4AS2
+
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 16 (EL1008)^Channel 1^Input'}
+b_3QF1		AT%I* :BOOL; // Состояние AB 3QF1 (питание приводов конв.3)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 16 (EL1008)^Channel 2^Input'}
+b_3KM1_1	AT%I* :BOOL; // Состояние 3КМ1.1 (конв.3 прямое вращение)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 16 (EL1008)^Channel 3^Input'}
+b_3KM1_2	AT%I* :BOOL; // Состояние 3КМ1.2 (конв.3 реверсивное вращение)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 16 (EL1008)^Channel 4^Input'}
+b_4QF1		AT%I* :BOOL; // Состояние AB 4QF1 (питание приводов конв.4)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 16 (EL1008)^Channel 5^Input'}
+b_4KM1_1	AT%I* :BOOL; // Состояние 4КМ1.1 (конв.4 прямое вращение)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 16 (EL1008)^Channel 6^Input'}
+b_4KM1_2	AT%I* :BOOL; // Состояние 4КМ1.2 (конв.4 реверсивное вращение)
+
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 17 (EL1008)^Channel 1^Input'}
+b_3QF2_3QF7 AT%I* :BOOL; // Состояние AB 3QF2,3QF3,3QF4,3QF5,3QF6,3QF7 (питание привода конвейер 3 1М1)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 17 (EL1008)^Channel 2^Input'}
+b_3QF8		AT%I* :BOOL; // Состояние AB 3QF8 (питание тормозов конвейер 3)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 17 (EL1008)^Channel 3^Input'}
+b_3KM2		AT%I* :BOOL; // Состояние 3КМ2 (питание тормоза конвейер 3 3BR1)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 17 (EL1008)^Channel 4^Input'}
+b_3KM3		AT%I* :BOOL; // Состояние 3КМ3 (питание тормоза конвейер 3 3BR2)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 17 (EL1008)^Channel 5^Input'}
+b_3KM4		AT%I* :BOOL; // Состояние 3КМ4 (питание тормоза конвейер 3 3BR3)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 17 (EL1008)^Channel 6^Input'}
+b_3KM5		AT%I* :BOOL; // Состояние 3КМ5 (питание тормоза конвейер 3 3BR4)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 17 (EL1008)^Channel 7^Input'}
+b_3KM6		AT%I* :BOOL; // Состояние 3КМ6 (питание тормоза конвейер 3 3BR5)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 17 (EL1008)^Channel 8^Input'}
+b_3KM7		AT%I* :BOOL; // Состояние 3КМ7 (питание тормоза конвейер 3 3BR6)
+
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 18 (EL1008)^Channel 1^Input'}
+b_4QF2_4QF7 AT%I* :BOOL; // Состояние AB 4QF2,4QF3,4QF4,4QF5,4QF6,4QF7 (питание привода конвейер 4 2М1)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 18 (EL1008)^Channel 2^Input'}
+b_4QF8		AT%I* :BOOL; // Состояние AB 4QF8 (питание тормозов конвейер 4)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 18 (EL1008)^Channel 3^Input'}
+b_4KM2		AT%I* :BOOL; // Состояние 4КМ2 (питание тормоза конвейер 4 4BR1)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 18 (EL1008)^Channel 4^Input'}
+b_4KM3		AT%I* :BOOL; // Состояние 4КМ3 (питание тормоза конвейер 4 4BR2)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 18 (EL1008)^Channel 5^Input'}
+b_4KM4		AT%I* :BOOL; // Состояние 4КМ4 (питание тормоза конвейер 4 4BR3)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 18 (EL1008)^Channel 6^Input'}
+b_4KM5		AT%I* :BOOL; // Состояние 4КМ5 (питание тормоза конвейер 4 4BR4)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 18 (EL1008)^Channel 7^Input'}
+b_4KM6		AT%I* :BOOL; // Состояние 4КМ6 (питание тормоза конвейер 4 4BR5)
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 18 (EL1008)^Channel 8^Input'}
+b_4KM7		AT%I* :BOOL; // Состояние 4КМ7 (питание тормоза конвейер 4 4BR6)
+
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 20 (EL2008)^Channel 1^Output'}
+b_3K1_1		AT%Q* :BOOL; // Включение 3КМ1.1
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 20 (EL2008)^Channel 2^Output'}
+b_3K1_2		AT%Q* :BOOL; // Включение 3КМ1.2
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 20 (EL2008)^Channel 3^Output'}
+b_4K1_1		AT%Q* :BOOL; // Включение 4КМ1.1
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 20 (EL2008)^Channel 4^Output'}
+b_4K1_2		AT%Q* :BOOL; // Включение 4КМ1.2
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 20 (EL2008)^Channel 5^Output'}
+b3K2		AT%Q* :BOOL; // Пуск 3UZ1
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 20 (EL2008)^Channel 6^Output'}
+b3K3		AT%Q* :BOOL; // Пуск 3UZ2
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 20 (EL2008)^Channel 7^Output'}
+b3K4		AT%Q* :BOOL; // Пуск 3UZ3
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 20 (EL2008)^Channel 8^Output'}
+b3K5		AT%Q* :BOOL; // Пуск 3UZ4
+
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 21 (EL2008)^Channel 1^Output'}
+b3K6		AT%Q* :BOOL; // Пуск 3UZ5
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 21 (EL2008)^Channel 2^Output'}
+b3K7		AT%Q* :BOOL; // Пуск 3UZ6
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 21 (EL2008)^Channel 3^Output'}
+b4K2		AT%Q* :BOOL; // Пуск 4UZ1
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 21 (EL2008)^Channel 4^Output'}
+b4K3		AT%Q* :BOOL; // Пуск 4UZ2
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 21 (EL2008)^Channel 5^Output'}
+b4K4		AT%Q* :BOOL; // Пуск 4UZ3
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 21 (EL2008)^Channel 6^Output'}
+b4K5		AT%Q* :BOOL; // Пуск 4UZ4
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 21 (EL2008)^Channel 7^Output'}
+b4K6		AT%Q* :BOOL; // Пуск 4UZ5
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 21 (EL2008)^Channel 8^Output'}
+b4K7		AT%Q* :BOOL; // Пуск 4UZ6
+
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 22 (EL2008)^Channel 1^Output'}
+b3S1_SB0	AT%Q* :BOOL; // Лампа SB0 +3.S1-SB0
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 22 (EL2008)^Channel 2^Output'}
+b3S6_SB0	AT%Q* :BOOL; // Лампа SB0 +3.S6-SB0
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 22 (EL2008)^Channel 3^Output'}
+b4S1_SB0	AT%Q* :BOOL; // Лампа SB0 +4.S1-SB0
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 22 (EL2008)^Channel 4^Output'}
+b4S6_SB0	AT%Q* :BOOL; // Лампа SB0 +4.S6-SB0
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 22 (EL2008)^Channel 5^Output'}
+b2Sh_SB0	AT%Q* :BOOL; // Лампа SB0 +2ШУ-1SB0
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 22 (EL2008)^Channel 6^Output'}
+b2Sh_SB1	AT%Q* :BOOL; // Лампа Рестарт +2ШУ-1SB1
+
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

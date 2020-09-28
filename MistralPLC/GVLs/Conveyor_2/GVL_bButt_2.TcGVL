@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <GVL Name="GVL_bButt_2" Id="{7dadbaf0-8772-4923-86ae-ed028496f009}">
+    <Declaration><![CDATA[VAR_GLOBAL
+	bButtAuto2		:BOOL;
+	bButtManu2		:BOOL;
+	bButtStop2 		:BOOL;
+	bButtReverse2 	:BOOL;
+//-------------------------//
+	bButt2s01		:BOOL;
+	bButt2s01Rev	:BOOL;
+	bButt2s02		:BOOL;
+	bButt2s02Rev	:BOOL;
+	bButt2s03		:BOOL;
+	bButt2s03Rev	:BOOL;
+	bButt2s04		:BOOL;
+	bButt2s04Rev	:BOOL;								
+	bButt2s05		:BOOL;									
+	bButt2s05Rev	:BOOL;									
+	bButt2s06		:BOOL;									
+	bButt2s06Rev	:BOOL;
+//-------------------------//
+	bButt2s01_s02	:BOOL;
+	bButt2s02_s03	:BOOL;
+	bButt2s03_s04	:BOOL;
+	bButt2s04_s05	:BOOL;
+	bButt2s05_s06	:BOOL;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

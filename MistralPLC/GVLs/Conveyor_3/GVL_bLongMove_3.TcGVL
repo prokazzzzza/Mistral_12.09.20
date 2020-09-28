@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <GVL Name="GVL_bLongMove_3" Id="{05479d63-00c4-47c6-8985-31a78069bd57}">
+    <Declaration><![CDATA[VAR_GLOBAL
+// Долгие перемещения
+// Прямое движение	
+bLongMove3s01_s02_1		:BOOL;
+bLongMove3s02_1_s02_2   :BOOL;
+bLongMove3s02_2_s03_1   :BOOL;
+bLongMove3s02_s03       :BOOL;
+bLongMove3s03_1_s03_2   :BOOL;
+bLongMove3s03_2_s04_1   :BOOL;
+bLongMove3s03_s04       :BOOL;
+bLongMove3s04_1_s04_2   :BOOL;
+bLongMove3s04_2_s05     :BOOL;
+bLongMove3s05_1s06		:BOOL;
+
+bLongMove_3s01_s02_1	 :BOOL;
+bLongMove_3s02_1_s02_2   :BOOL;
+bLongMove_3s02_2_s03_1   :BOOL;
+bLongMove_3s02_s03       :BOOL;
+bLongMove_3s03_1_s03_2   :BOOL;
+bLongMove_3s03_2_s04_1   :BOOL;
+bLongMove_3s03_s04       :BOOL;
+bLongMove_3s04_1_s04_2   :BOOL;
+bLongMove_3s04_2_s05     :BOOL;
+bLongMove_3s05_1s06		:BOOL;  
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

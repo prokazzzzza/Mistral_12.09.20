@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+  <GVL Name="GVL_Lights" Id="{6f81102f-b4c4-4e8f-8259-13743cf1d9c6}">
+    <Declaration><![CDATA[VAR_GLOBAL
+// Светофоры
+// 4 цвета + сирена на стойке стеллажа h=3000мм Конвейер 1
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 1 (EPP2339-0021) X1^Channel 29^Output'}
+	bRed_1S1HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 1 (EPP2339-0021) X1^Channel 30^Output'}
+	bGreen_1S1HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 1 (EPP2339-0021) X1^Channel 31^Output'}
+	bYellow_1S1HL1 	 		AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 1 (EPP2339-0021) X1^Channel 32^Output'}
+	bBlue_1S1HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 1 (EPP2339-0021) X1^Channel 28^Output'}
+	bSound_1S1HL1			AT%Q*	:BOOL;
+//---------------------------------------------------------------------------------------------------------------//
+// 4 цвета + сирена на стойке стеллажа h=3000мм Конвейер 1
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 3 (EPP2339-0021) X1^Channel 21^Output'}
+	bRed_1S1_HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 3 (EPP2339-0021) X1^Channel 22^Output'}
+	bGreen_1S1_HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 3 (EPP2339-0021) X1^Channel 23^Output'}
+	bYellow_1S1_HL1 	 	AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 3 (EPP2339-0021) X1^Channel 24^Output'}
+	bBlue_1S1_HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 3 (EPP2339-0021) X1^Channel 20^Output'}
+	bSound_1S1_HL1			AT%Q*	:BOOL;
+//---------------------------------------------------------------------------------------------------------------//
+// 4 цвета + сирена на стойке стеллажа h=3000мм Конвейер 2
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 4 (EPP2339-0021) X2^Channel 29^Output'}
+	bRed_2S1HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 4 (EPP2339-0021) X2^Channel 30^Output'}
+	bGreen_2S1HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 4 (EPP2339-0021) X2^Channel 31^Output'}
+	bYellow_2S1HL1 	 		AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 4 (EPP2339-0021) X2^Channel 32^Output'}
+	bBlue_2S1HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 4 (EPP2339-0021) X2^Channel 28^Output'}
+	bSound_2S1HL1			AT%Q*	:BOOL;
+//---------------------------------------------------------------------------------------------------------------//
+// 4 цвета + сирена на стойке стеллажа h=3000мм Конвейер 2
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 6 (EPP2339-0021) X2^Channel 21^Output'}
+	bRed_2S1_HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 6 (EPP2339-0021) X2^Channel 22^Output'}
+	bGreen_2S1_HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 6 (EPP2339-0021) X2^Channel 23^Output'}
+	bYellow_2S1_HL1 	 	AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 6 (EPP2339-0021) X2^Channel 24^Output'}
+	bBlue_2S1_HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 13 (EK1322)^Box 6 (EPP2339-0021) X2^Channel 20^Output'}
+	bSound_2S1_HL1			AT%Q*	:BOOL;
+//---------------------------------------------------------------------------------------------------------------//
+// 4 цвета + сирена на стойке стеллажа h=3000мм Конвейер 3
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 1 (EPP2339-0021) X3^Channel 29^Output'}
+	bRed_3S1HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 1 (EPP2339-0021) X3^Channel 30^Output'}
+	bGreen_3S1HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 1 (EPP2339-0021) X3^Channel 31^Output'}
+	bYellow_3S1HL1 	 		AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 1 (EPP2339-0021) X3^Channel 32^Output'}
+	bBlue_3S1HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 1 (EPP2339-0021) X3^Channel 28^Output'}
+	bSound_3S1HL1			AT%Q*	:BOOL;
+//---------------------------------------------------------------------------------------------------------------//
+// 4 цвета + сирена на стойке стеллажа h=3000мм Конвейер 3
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 3 (EPP2339-0021) X3^Channel 21^Output'}
+	bRed_3S1_HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 3 (EPP2339-0021) X3^Channel 22^Output'}
+	bGreen_3S1_HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 3 (EPP2339-0021) X3^Channel 23^Output'}
+	bYellow_3S1_HL1 	 	AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 3 (EPP2339-0021) X3^Channel 24^Output'}
+	bBlue_3S1_HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 3 (EPP2339-0021) X3^Channel 20^Output'}
+	bSound_3S1_HL1			AT%Q*	:BOOL;
+//---------------------------------------------------------------------------------------------------------------//
+// 4 цвета + сирена на стойке стеллажа h=3000мм Конвейер 4
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 4 (EPP2339-0021) X4^Channel 24^Output'}
+	bRed_4S1HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 4 (EPP2339-0021) X4^Channel 30^Output'}
+	bGreen_4S1HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 4 (EPP2339-0021) X4^Channel 31^Output'}
+	bYellow_4S1HL1 	 		AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 4 (EPP2339-0021) X4^Channel 32^Output'}
+	bBlue_4S1HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 4 (EPP2339-0021) X4^Channel 28^Output'}
+	bSound_4S1HL1			AT%Q*	:BOOL;
+//---------------------------------------------------------------------------------------------------------------//
+// 4 цвета + сирена на стойке стеллажа h=3000мм Конвейер 4
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 6 (EPP2339-0021) X4^Channel 21^Output'}
+	bRed_4S1_HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 6 (EPP2339-0021) X4^Channel 22^Output'}
+	bGreen_4S1_HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 6 (EPP2339-0021) X4^Channel 23^Output'}
+	bYellow_4S1_HL1 	 	AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 6 (EPP2339-0021) X4^Channel 24^Output'}
+	bBlue_4S1_HL1 			AT%Q*	:BOOL;
+{attribute 'TcLinkTo' := 'TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 11 (EK1122)^Term 12 (EK1100)^Term 24 (EK1322)^Box 6 (EPP2339-0021) X4^Channel 20^Output'}
+	bSound_4S1_HL1			AT%Q*	:BOOL;
+
+	bNotReadyCC1_HLA1_Red  			:BOOL;		// Красный цвет
+	bNotReadyCC1_HLA1_Yellow        :BOOL;		// Желтый цвет
+	bNotReadyCC1_HLA1_Green         :BOOL;		// Зелёный цвет
+	bNotReadyCC1_HLA1_Blue          :BOOL;		// Синий цвет
+	bNotReadyCC1_HLA1_Sound         :BOOL;		// Звуковой сигнал
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>
